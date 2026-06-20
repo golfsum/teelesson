@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors } from "@/theme";
 
-const CONTACT_EMAIL = "hello@teelesson.app";
+const CONTACT_EMAIL = "support@teelesson.com";
 
 export default function ComingSoonScreen() {
   const insets = useSafeAreaInsets();
