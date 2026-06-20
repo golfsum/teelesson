@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "TeeLesson",
+    "slug": "teelesson",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "teelesson",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#5F5933"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.teelesson.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#5F5933"
+      },
+      "package": "com.teelesson.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "TeeLesson - Golf Coach Software",
+      "shortName": "TeeLesson",
+      "description": "Manage your roster, take lesson booking requests, and share a public booking page — built for independent golf coaches.",
+      "themeColor": "#6C844C",
+      "backgroundColor": "#ffffff",
+      "lang": "en"
+    },
+    "plugins": [
+      "expo-video",
+      "expo-image-picker",
+      "expo-notifications",
+      "expo-asset",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
+    }
+  }
+}

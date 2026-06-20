@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Helpers ----
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function uid() {
+      return request.auth.uid;
+    }
+    function userDoc(id) {
+      return get(/databases/$(database)/documents/users/$(id)).data;
+    }
+    function isCoach() {
+      return isSignedIn() && userDoc(uid()).role == 'coach';
+    }
+    // True when `playerId` is a player owned by the signed-in coach.
+    function ownsPlayer(playerId) {
+      return isCoach() && userDoc(playerId).coachId == uid();
+    }
+
+    // ---- users ----
+    // Anyone signed in can read a user (needed for public coach profiles &
+    // coach<->player lookups). Users may only write their own document.
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && uid() == userId;
+      allow update: if isSignedIn() && (
+        uid() == userId ||
+        // A coach may update a player they own (e.g. notes, handicap, goals).
+        ownsPlayer(userId)
+      );
+      allow delete: if isSignedIn() && uid() == userId;
+    }
+
+    // ---- lessons ----
+    // Readable/writable by the owning coach or the assigned player.
+    match /lessons/{lessonId} {
+      allow read: if isSignedIn() && (
+        resource.data.coachId == uid() || resource.data.playerId == uid()
+      );
+      allow create: if isSignedIn() && (
+        request.resource.data.coachId == uid() ||
+        request.resource.data.playerId == uid()
+      );
+      allow update, delete: if isSignedIn() && (
+        resource.data.coachId == uid() || resource.data.playerId == uid()
+      );
+    }
+
+    // ---- availability ----
+    // Coach availability slots. Owned by the coach; readable by signed-in users
+    // (players need to see open slots to request a booking).
+    match /availability/{slotId} {
+      allow read: if isSignedIn();
+      allow create: if isCoach() && request.resource.data.coachId == uid();
+      allow update, delete: if isSignedIn() && resource.data.coachId == uid();
+    }
+  }
+}
