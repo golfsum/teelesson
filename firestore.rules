@@ -50,6 +50,17 @@ service cloud.firestore {
       );
     }
 
+    // ---- progress ----
+    // Dated player performance snapshots. Owned by the coach; the player may
+    // read their own. Only the coach writes.
+    match /progress/{entryId} {
+      allow read: if isSignedIn() && (
+        resource.data.coachId == uid() || resource.data.playerId == uid()
+      );
+      allow create: if isCoach() && request.resource.data.coachId == uid();
+      allow update, delete: if isSignedIn() && resource.data.coachId == uid();
+    }
+
     // ---- availability ----
     // Coach availability slots. Owned by the coach; readable by signed-in users
     // (players need to see open slots to request a booking).

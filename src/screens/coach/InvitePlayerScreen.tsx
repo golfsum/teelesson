@@ -1,5 +1,5 @@
 /**
- * InvitePlayerScreen — lets a coach share a sign-up link and (stub) send an
+ * InvitePlayerScreen, lets a coach share a sign-up link and (stub) send an
  * email invitation to a prospective player.
  */
 import React, { useState } from "react";
@@ -25,7 +25,7 @@ function buildInviteLink(coachId: string): string {
   if (typeof window !== "undefined" && window.location?.origin) {
     return `${window.location.origin}${path}`;
   }
-  // On native we don't have a web origin — show the path so coaches can share it manually.
+  // On native we don't have a web origin, show the path so coaches can share it manually.
   return path;
 }
 
@@ -65,7 +65,7 @@ export default function InvitePlayerScreen() {
   const coachId = user?.id ?? "";
   const inviteLink = coachId ? buildInviteLink(coachId) : "";
 
-  // On native the link is just a path — show the full web URL as selectable text
+  // On native the link is just a path, show the full web URL as selectable text
   const isWebLink = inviteLink.startsWith("http");
 
   // -----------------------------------------------------------------------
@@ -86,7 +86,7 @@ export default function InvitePlayerScreen() {
   }
 
   // -----------------------------------------------------------------------
-  // Send invite (MVP stub — no backend email yet)
+  // Send invite (MVP stub, no backend email yet)
   // -----------------------------------------------------------------------
   function validateEmail(value: string): boolean {
     if (!value.trim()) {
@@ -131,7 +131,7 @@ export default function InvitePlayerScreen() {
       </View>
 
       {/* ---------------------------------------------------------------- */}
-      {/* Section 1 — Shareable link                                       */}
+      {/* Section 1, Shareable link                                       */}
       {/* ---------------------------------------------------------------- */}
       <Card className="mb-6">
         <View className="flex-row items-center mb-3">
@@ -143,10 +143,10 @@ export default function InvitePlayerScreen() {
 
         <Text className="text-sm text-ink-500 mb-3">
           Any player who signs up via this link will be automatically linked to
-          your coaching account — no extra steps needed.
+          your coaching account, no extra steps needed.
         </Text>
 
-        {/* Link display — selectable on all platforms */}
+        {/* Link display, selectable on all platforms */}
         <View className="bg-sand-50 rounded-xl px-4 py-3 mb-4">
           <Text
             selectable
@@ -181,7 +181,7 @@ export default function InvitePlayerScreen() {
       </Card>
 
       {/* ---------------------------------------------------------------- */}
-      {/* Section 2 — Email invite (stub)                                  */}
+      {/* Section 2, Email invite (stub)                                  */}
       {/* ---------------------------------------------------------------- */}
       <Card className="mb-6">
         <View className="flex-row items-center mb-3">

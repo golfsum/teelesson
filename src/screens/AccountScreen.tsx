@@ -213,7 +213,7 @@ export default function AccountScreen() {
           icon="shield-checkmark-outline"
           label="Privacy Policy"
           onPress={() => {
-            // stub — open privacy policy URL
+            // stub, open privacy policy URL
           }}
         />
         <Divider />
@@ -221,7 +221,7 @@ export default function AccountScreen() {
           icon="document-text-outline"
           label="Terms of Service"
           onPress={() => {
-            // stub — open terms of service URL
+            // stub, open terms of service URL
           }}
         />
       </View>

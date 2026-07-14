@@ -1,10 +1,10 @@
 /**
- * PlayerHomeScreen — "My Lessons"
+ * PlayerHomeScreen, "My Lessons"
  * The player's home tab: displays their linked coach, upcoming/past lessons,
  * and a prominent "Book a Lesson" CTA.
  */
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, FlatList } from "react-native";
+import { View, Text, ActivityIndicator, Alert, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -27,10 +27,25 @@ export default function PlayerHomeScreen() {
   const playerId = user?.id ?? "";
   const coachId = user?.coachId;
 
-  const { upcoming, past, loading } = useLessons({ playerId });
+  const { upcoming, past, loading, cancelLesson } = useLessons({ playerId });
 
   const [coach, setCoach] = useState<AppUser | null>(null);
   const [coachLoading, setCoachLoading] = useState(false);
+
+  // Player cancels their own request / booking (coach is notified via status).
+  const handleCancel = (lesson: Lesson) => {
+    const isRequest = lesson.status === "requested";
+    Alert.alert(
+      isRequest ? "Cancel request?" : "Cancel lesson?",
+      isRequest
+        ? "Your coach won't see this request anymore."
+        : "Your coach will be notified this lesson was cancelled.",
+      [
+        { text: "Keep", style: "cancel" },
+        { text: "Cancel it", style: "destructive", onPress: () => cancelLesson(lesson.id) },
+      ]
+    );
+  };
 
   // Fetch the linked coach's profile for display name
   useEffect(() => {
@@ -46,21 +61,28 @@ export default function PlayerHomeScreen() {
 
   const isLoading = loading || coachLoading;
 
-  // Renders a single upcoming or past lesson row
-  const renderLesson = ({ item }: { item: Lesson }) => (
+  // Renders a single lesson row; upcoming lessons get a Cancel action.
+  const renderLesson = (item: Lesson, cancelable: boolean) => (
     <LessonCard
       lesson={item}
       title={coachName}
-      onPress={() => {
-        // Navigate to lesson detail when available
-      }}
+      rightActions={
+        cancelable ? (
+          <Button
+            title={item.status === "requested" ? "Cancel request" : "Cancel"}
+            variant="outline"
+            size="sm"
+            onPress={() => handleCancel(item)}
+          />
+        ) : undefined
+      }
     />
   );
 
   // Unified list data: upcoming section header + items, past section header + items
   type ListRow =
     | { kind: "header"; label: string }
-    | { kind: "lesson"; data: Lesson }
+    | { kind: "lesson"; data: Lesson; cancelable: boolean }
     | { kind: "bookCta" }
     | { kind: "empty" };
 
@@ -71,12 +93,12 @@ export default function PlayerHomeScreen() {
 
     if (upcoming.length > 0) {
       rows.push({ kind: "header", label: "Upcoming Lessons" });
-      upcoming.forEach((l) => rows.push({ kind: "lesson", data: l }));
+      upcoming.forEach((l) => rows.push({ kind: "lesson", data: l, cancelable: true }));
     }
 
     if (past.length > 0) {
       rows.push({ kind: "header", label: "Past Lessons" });
-      past.forEach((l) => rows.push({ kind: "lesson", data: l }));
+      past.forEach((l) => rows.push({ kind: "lesson", data: l, cancelable: false }));
     }
 
     if (upcoming.length === 0 && past.length === 0) {
@@ -105,7 +127,7 @@ export default function PlayerHomeScreen() {
         My Lessons
       </Text>
 
-      {/* Coach card — shown only when a coachId is linked */}
+      {/* Coach card, shown only when a coachId is linked */}
       {coachId ? (
         <Card className="mx-4 mb-4">
           <Text className="text-xs font-semibold text-ink-500 uppercase tracking-widest mb-0.5">
@@ -162,7 +184,7 @@ export default function PlayerHomeScreen() {
           if (item.kind === "lesson") {
             return (
               <View className="px-4 mb-2">
-                {renderLesson({ item: item.data })}
+                {renderLesson(item.data, item.cancelable)}
               </View>
             );
           }

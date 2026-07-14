@@ -9,38 +9,48 @@
 export const colors = {
   // Brand olive-green, anchored on #6C844C (primary) and #5F5933 (deep).
   fairway: {
-    50: "#f4f6ee",
-    100: "#e7ecd7",
-    200: "#cfd9b4",
-    300: "#b2c189",
-    400: "#8ea862",
-    500: "#6C844C",
-    600: "#5b7040",
-    700: "#5F5933",
-    800: "#474328",
-    900: "#33311d",
+    50: "#ecfdf5",
+    100: "#d2f9e4",
+    200: "#9bf0c4",
+    300: "#5ce39f",
+    400: "#22d17b",
+    500: "#0aae63",
+    600: "#057545",
+    700: "#086e42",
+    800: "#075737",
+    900: "#05452e",
   },
   // Warm cream, anchored on #F9E6BF.
   sand: {
-    50: "#fefcf6",
-    100: "#fdf3dd",
-    200: "#F9E6BF",
+    50: "#fffaf0",
+    100: "#fff1d6",
+    200: "#ffe4ad",
   },
   // Slate/sage neutrals: #9CACA7 (muted) → #3C505C (text).
   ink: {
-    50: "#f5f7f6",
-    100: "#e9edec",
-    200: "#d4dbd9",
-    400: "#9CACA7",
-    500: "#687a76",
-    700: "#3C505C",
-    900: "#26333b",
+    50: "#f5f8f7",
+    100: "#edf2f0",
+    200: "#d9e3df",
+    300: "#bdcbc6",
+    400: "#5f716b",
+    500: "#5b6d67",
+    600: "#455852",
+    700: "#30443e",
+    800: "#1b302a",
+    900: "#0b1f1a",
   },
   white: "#ffffff",
-  // Red retained for genuine error/destructive states (no red in the palette).
-  danger: "#c0492f",
-  warning: "#5F5933",
-  success: "#6C844C",
+  navy: "#031d18",
+  navySoft: "#0a3028",
+  forestCanvas: "#f6faf8",
+  forestLine: "#d7e5df",
+  emerald: "#19d47d",
+  blue: "#2455d6",
+  orange: "#ee7b16",
+  purple: "#9c45e8",
+  danger: "#d82c35",
+  warning: "#d98a00",
+  success: "#159447",
 } as const;
 
 export const theme = {
@@ -50,9 +60,9 @@ export const theme = {
   text: colors.ink[900],
   textMuted: colors.ink[500],
   border: colors.ink[200],
-  background: colors.ink[50],
+  background: colors.forestCanvas,
   card: colors.white,
-  radius: { sm: 8, md: 12, lg: 16, xl: 24 },
+  radius: { sm: 7, md: 10, lg: 14, xl: 20 },
   spacing: (n: number) => n * 4,
 } as const;
 
@@ -62,12 +72,15 @@ export const LESSON_TYPE_LABELS: Record<string, string> = {
   simulator: "Simulator",
   online: "Online",
   indoor: "Indoor",
+  group: "Group Lesson",
+  review: "Online Review",
 };
 
 /** Color accents for lesson statuses (tailwind text/bg class fragments). */
 export const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  requested: { bg: "bg-sand-200", text: "text-fairway-800", label: "Requested" },
+  requested: { bg: "bg-sand-100", text: "text-amber-800", label: "Requested" },
   confirmed: { bg: "bg-fairway-100", text: "text-fairway-700", label: "Confirmed" },
   completed: { bg: "bg-ink-100", text: "text-ink-500", label: "Completed" },
+  noShow: { bg: "bg-red-100", text: "text-red-700", label: "No-show" },
   cancelled: { bg: "bg-ink-200", text: "text-ink-700", label: "Cancelled" },
 };

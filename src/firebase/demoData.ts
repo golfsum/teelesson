@@ -1,16 +1,46 @@
 /**
  * Demo data for previewing the app without a Firebase backend.
  *
- * Served by the dbService watch functions when {@link USE_DEMO_DATA} is true —
- * i.e. when no real Firebase credentials are configured, or when explicitly
- * forced with `EXPO_PUBLIC_DEMO_DATA=1`. With real credentials configured this
- * is inert, so production data is never mixed with demo content.
+ * Served by the dbService watch functions when {@link USE_DEMO_DATA} is true -
+ * i.e. when no real Firebase credentials are configured, when explicitly
+ * forced with `EXPO_PUBLIC_DEMO_DATA=1`, or while the development auth bypass
+ * is active. Production data is never mixed with demo content.
  */
 import { isFirebaseConfigured } from "./config";
-import type { Lesson, LessonType, Player } from "@/types";
+import type {
+  AppUser,
+  AvailabilitySlot,
+  Lesson,
+  LessonType,
+  Player,
+  ProgressEntry,
+} from "@/types";
+
+/** The demo coach's public profile (matches the dev mock account). */
+export function demoCoach(): AppUser {
+  return {
+    id: "dev-user",
+    name: "Demo Coach",
+    email: "demo@teelesson.app",
+    role: "coach",
+    hourlyRate: 75,
+    subscriptionPlan: "Pro",
+    publicSlug: "demo-coach",
+    location: "Austin, TX",
+    experienceYears: 12,
+    bio: "PGA-certified coach focused on the short game and course management. I help players of every level build a repeatable swing and lower their scores.",
+    specialties: ["Short game", "Putting", "Swing analysis"],
+    testimonials: [
+      { author: "Liam C.", role: "Member", quote: "Knocked 6 strokes off my handicap in a single season." },
+      { author: "Ava F.", role: "Junior parent", quote: "Fantastic with kids and adults alike, my daughter loves the lessons." },
+    ],
+  };
+}
 
 export const USE_DEMO_DATA =
-  process.env.EXPO_PUBLIC_DEMO_DATA === "1" || !isFirebaseConfigured;
+  process.env.EXPO_PUBLIC_DEMO_DATA === "1" ||
+  !isFirebaseConfigured ||
+  (__DEV__ && process.env.EXPO_PUBLIC_DEV_SKIP_AUTH !== "0");
 
 const TYPES: LessonType[] = ["range", "simulator", "online", "indoor"];
 
@@ -43,9 +73,31 @@ const PLAYER_SEED: Array<{
   { name: "Lucas Moore", handicap: 12.4, goals: "Tournament prep", phone: "(555) 014-2291" },
 ];
 
+const EXTRA_PLAYER_NAMES = [
+  "Charlotte Nelson", "Henry Owens", "Amelia Parker", "Alexander Quinn",
+  "Harper Reed", "Daniel Scott", "Evelyn Turner", "Matthew Underwood",
+  "Abigail Vaughn", "Samuel Walker", "Emily Xavier", "Jackson Young",
+  "Ella Zimmerman", "Sebastian Adams", "Scarlett Brooks", "David Collins",
+  "Grace Diaz", "Joseph Edwards", "Chloe Flores", "Carter Green",
+  "Victoria Hall", "Wyatt Ingram", "Riley Johnson", "Luke Kennedy",
+  "Lily Lewis", "Gabriel Mitchell", "Zoey Nichols", "Owen Ortiz",
+  "Nora Phillips", "Julian Roberts", "Hannah Simmons", "Levi Taylor",
+  "Layla Usher", "Isaac Vega", "Aria White", "Anthony Xu",
+  "Penelope York", "Dylan Zane", "Camila Archer", "Andrew Bishop",
+];
+
 /** Twelve demo players belonging to the given coach. */
 export function demoPlayers(coachId: string): Player[] {
-  return PLAYER_SEED.map((p, i) => {
+  const seeds = [
+    ...PLAYER_SEED,
+    ...EXTRA_PLAYER_NAMES.map((name, index) => ({
+      name,
+      handicap: Number((6.5 + (index % 18) * 1.1).toFixed(1)),
+      goals: ["Build a repeatable swing", "Break 90", "Improve course management", "Lower scoring average"][index % 4],
+      phone: `(555) 015-${String(2300 + index)}`,
+    })),
+  ];
+  return seeds.map((p, i) => {
     const [first, last] = p.name.toLowerCase().split(" ");
     return {
       id: pid(i + 1),
@@ -64,7 +116,7 @@ export function demoPlayers(coachId: string): Player[] {
 /**
  * A spread of demo lessons: completed sessions across earlier months (for the
  * monthly bar chart), upcoming confirmed lessons, pending requests, and a
- * cancellation — exercising every status and the paid/unpaid toggle.
+ * cancellation, exercising every status and the paid/unpaid toggle.
  */
 export function demoLessons(coachId: string): Lesson[] {
   const now = new Date();
@@ -93,30 +145,61 @@ export function demoLessons(coachId: string): Lesson[] {
   }
 
   // Upcoming confirmed lessons → these players show as "Active".
+  push({
+    date: isoOffset(0),
+    startTime: "07:30",
+    duration: 60,
+    type: "review",
+    status: "confirmed",
+    title: "Online swing review",
+  });
   [
-    { p: 1, o: 2 },
-    { p: 3, o: 4 },
-    { p: 6, o: 6 },
-    { p: 8, o: 9 },
-    { p: 2, o: 12 },
-    { p: 10, o: 15 },
-  ].forEach(({ p, o }, i) => {
+    { p: 1, time: "08:30", duration: 45, type: "range" as const },
+    { p: 4, time: "09:00", duration: 60, type: "range" as const },
+    { p: 3, time: "10:00", duration: 60, type: "simulator" as const },
+  ].forEach(({ p, time, duration, type }, i) => {
+    push({
+      playerId: pid(p),
+      date: isoOffset(0),
+      startTime: time,
+      duration,
+      type,
+      status: "confirmed",
+      paid: i % 2 === 0,
+    });
+  });
+  push({
+    playerId: pid(2),
+    playerIds: [pid(2), pid(6), pid(9), pid(11), pid(13), pid(15)],
+    date: isoOffset(0),
+    startTime: "11:30",
+    duration: 90,
+    type: "group",
+    status: "confirmed",
+    title: "Junior Group Clinic",
+  });
+
+  Array.from({ length: 19 }, (_, index) => ({
+    p: (index % 47) + 6,
+    o: (index % 6) + 1,
+    time: ["08:00", "09:30", "11:00", "13:00", "14:30", "16:00"][index % 6],
+  })).forEach(({ p, o, time }, i) => {
     push({
       playerId: pid(p),
       date: isoOffset(o),
-      startTime: ["08:30", "10:00", "13:00", "15:30"][i % 4],
-      duration: [45, 60, 30, 60][i % 4],
-      type: TYPES[i % 4],
+      startTime: time,
+      duration: [30, 45, 60, 60][i % 4],
+      type: TYPES[i % TYPES.length],
       status: "confirmed",
-      paid: i % 2 === 0,
+      paid: i % 3 !== 0,
     });
   });
 
   // Pending requests awaiting approval.
   [
-    { p: 4, o: 3 },
-    { p: 7, o: 5 },
-    { p: 11, o: 8 },
+    { p: 4, o: 8 },
+    { p: 7, o: 10 },
+    { p: 11, o: 12 },
   ].forEach(({ p, o }, i) => {
     push({
       playerId: pid(p),
@@ -138,5 +221,73 @@ export function demoLessons(coachId: string): Lesson[] {
     status: "cancelled",
   });
 
+  // A recent no-show.
+  push({
+    playerId: pid(9),
+    date: isoOffset(-2),
+    startTime: "13:00",
+    duration: 60,
+    type: "range",
+    status: "noShow",
+  });
+
   return lessons;
+}
+
+/** Weekday 9–5 windows plus a one-off weekend morning. */
+export function demoAvailability(coachId: string): AvailabilitySlot[] {
+  const recurring: AvailabilitySlot[] = [1, 2, 3, 4, 5].map((weekday) => ({
+    id: `demo-av-${weekday}`,
+    coachId,
+    weekday,
+    recurring: true,
+    startTime: "09:00",
+    endTime: "17:00",
+  }));
+  return [
+    ...recurring,
+    {
+      id: "demo-av-oneoff",
+      coachId,
+      date: isoOffset(6),
+      recurring: false,
+      startTime: "08:00",
+      endTime: "12:00",
+    },
+  ];
+}
+
+/**
+ * Four dated measurement snapshots per player showing steady improvement over
+ * ~6 months, handicap, scoring average, and putts trend down; GIR, fairways,
+ * and driving distance trend up.
+ */
+export function demoProgress(playerId: string): ProgressEntry[] {
+  const n = parseInt(playerId.replace("demo-p", ""), 10);
+  const seed = PLAYER_SEED[(n - 1 + PLAYER_SEED.length) % PLAYER_SEED.length];
+  const baseHandicap = seed?.handicap ?? 26;
+  const round = (v: number, d = 0) => Number(v.toFixed(d));
+
+  // Snapshots at ~6, 4, 2, 0 months ago. f = 0 (start) → 1 (latest).
+  const offsets = [-180, -120, -60, 0];
+  return offsets.map((days, i) => {
+    const f = i / (offsets.length - 1);
+    const handicap = round(baseHandicap + 4 - 4 * f, 1);
+    return {
+      id: `demo-pr-${n}-${i}`,
+      coachId: "demo-coach",
+      playerId,
+      date: isoOffset(days),
+      handicap,
+      scoringAverage: round(72 + handicap * 0.95, 1),
+      gir: round(20 + 18 * f),
+      fairways: round(40 + 15 * f),
+      putts: round(36 - 5 * f, 1),
+      drivingDistance: round(225 + 20 * f),
+      upDown: round(35 + 20 * f),
+      sandSaves: round(20 + 18 * f),
+      threePutts: round(3.5 - 2 * f, 1),
+      createdAt: Date.now() - (offsets.length - i) * 5_184_000_000,
+    };
+  });
 }

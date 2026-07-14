@@ -1,5 +1,5 @@
 /**
- * Small formatting/date helpers shared across screens. No external date lib —
+ * Small formatting/date helpers shared across screens. No external date lib -
  * the MVP keeps dates as ISO "YYYY-MM-DD" strings and "HH:mm" time strings.
  */
 
@@ -60,7 +60,7 @@ export function initials(name?: string): string {
 }
 
 export function currency(n?: number): string {
-  if (n == null) return "—";
+  if (n == null) return "-";
   return `$${n.toLocaleString()}`;
 }
 

@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "export:web": "expo export -p web",
-    "lint": "tsc --noEmit"
+    "start": "expo start --clear",
+    "android": "expo start --android --clear",
+    "ios": "expo start --ios --clear",
+    "web": "expo start --web --clear --port 19006",
+    "web:19006": "expo start --web --clear --port 19006",
+    "export:web": "expo export -p web && node scripts/postbuild-web.mjs",
+    "lint": "tsc --noEmit",
+    "test:e2e": "playwright test tests/critical-flow.spec.ts",
+    "test:visual": "playwright test tests/visual.spec.ts",
+    "test:a11y": "playwright test tests/accessibility.spec.ts",
+    "assets:generate": "node scripts/generate-assets.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
@@ -40,8 +45,11 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@babel/core": "^7.25.2",
+    "@playwright/test": "^1.61.1",
     "@types/react": "~19.1.0",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.3.3"
   },

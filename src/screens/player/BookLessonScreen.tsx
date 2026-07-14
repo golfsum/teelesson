@@ -1,5 +1,5 @@
 /**
- * BookLessonScreen — player requests a lesson with their assigned coach.
+ * BookLessonScreen, player requests a lesson with their assigned coach.
  *
  * Flow:
  *  1. Pick a date from CalendarStrip.
@@ -273,7 +273,7 @@ export default function BookLessonScreen() {
         {/* ── Time slots ── */}
         <View className="px-5 mt-4">
           <Text className="text-xs font-semibold text-ink-500 uppercase tracking-widest mb-3">
-            Available Times — {formatDate(selectedDate)}
+            Available Times, {formatDate(selectedDate)}
           </Text>
 
           {availableTimes.length === 0 ? (

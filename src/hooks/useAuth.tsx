@@ -25,23 +25,38 @@ import {
 import type { AppUser, UserRole } from "@/types";
 
 /**
- * ⚠️ DEV ONLY — bypass the login screen so the app opens straight into the
+ * ⚠️ DEV ONLY, bypass the login screen so the app opens straight into the
  * main UI with a mock account. Flip this to `false` (or delete the block) to
  * restore the normal Firebase login flow before shipping.
  *
  * Note: data still comes from Firebase, so lists will be empty until you sign
- * in with a real account — this just lets you click through the screens.
+ * in with a real account, this just lets you click through the screens.
  */
-const DEV_SKIP_AUTH = true;
+const DEV_SKIP_AUTH = __DEV__ && process.env.EXPO_PUBLIC_DEV_SKIP_AUTH !== "0";
 
-/** Mock account used when DEV_SKIP_AUTH is on. Change role to "player" to
- *  preview the player app instead of the coach app. */
-const DEV_MOCK_USER: AppUser = {
-  id: "dev-user",
-  name: "Demo Coach",
-  email: "demo@teelesson.app",
-  role: "coach",
-};
+/**
+ * Mock account used when DEV_SKIP_AUTH is on. Set EXPO_PUBLIC_DEV_MOCK_USER to
+ * "player" (or "coach") in .env to choose which side to preview. Restart the
+ * dev server after changing it because Expo reads env vars at build time.
+ */
+const DEV_MOCK_ROLE = (process.env.EXPO_PUBLIC_DEV_MOCK_USER ?? "coach").toLowerCase();
+
+const DEV_MOCK_USER: AppUser =
+  DEV_MOCK_ROLE === "player"
+    ? {
+        id: "demo-p1", // a demo player so their demo lessons load
+        name: "Olivia Bennett",
+        email: "olivia.bennett@example.com",
+        role: "player",
+        coachId: "demo-coach",
+      }
+    : {
+        id: "dev-user",
+        name: "Demo Coach",
+        email: "demo@teelesson.app",
+        role: "coach",
+        hourlyRate: 75,
+      };
 
 interface AuthContextValue {
   /** Firestore profile for the signed-in user, or null when signed out. */

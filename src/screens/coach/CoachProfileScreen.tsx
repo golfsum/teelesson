@@ -1,5 +1,5 @@
 /**
- * CoachProfileScreen — coach edits their own public profile and navigates to
+ * CoachProfileScreen, coach edits their own public profile and navigates to
  * account settings. Photo upload, bio, specialties, slug, hourly rate, etc.
  */
 import React, { useEffect, useState } from "react";
@@ -13,19 +13,35 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Avatar, Button, Input, ScreenContainer } from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
+import { useAvailability } from "@/hooks/useAvailability";
 import { uploadImage } from "@/firebase/storageService";
 import { updateUser } from "@/firebase/dbService";
+import { colors } from "@/theme";
 import type { CoachStackParamList } from "@/navigation/types";
-import { slugify } from "@/utils/format";
+import { slugify, formatTime, formatDate, todayISO } from "@/utils/format";
 
 type Nav = NativeStackNavigationProp<CoachStackParamList>;
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function CoachProfileScreen() {
   const navigation = useNavigation<Nav>();
   const { user, refresh } = useAuth();
+
+  // ── Availability preview ──────────────────────────────────────────────────
+  const { slots, loading: availLoading } = useAvailability(user?.id);
+  const today = todayISO();
+  const recurringSlots = slots
+    .filter((s) => s.recurring && s.weekday != null)
+    .sort((a, b) => (a.weekday! - b.weekday!) || a.startTime.localeCompare(b.startTime));
+  const oneOffSlots = slots
+    .filter((s) => !s.recurring && s.date && s.date >= today)
+    .sort((a, b) => (a.date! + a.startTime).localeCompare(b.date! + b.startTime))
+    .slice(0, 5);
 
   // ── local form state ──────────────────────────────────────────────────────
   const [photoURI, setPhotoURI] = useState<string | undefined>(
@@ -253,6 +269,50 @@ export default function CoachProfileScreen() {
         </Text>
       </Pressable>
 
+      {/* ── Availability preview ── */}
+      <View className="mb-6">
+        <View className="mb-2 flex-row items-center justify-between">
+          <Text className="text-base font-bold text-ink-900">Your Availability</Text>
+          <Pressable onPress={() => navigation.navigate("Availability")}>
+            <Text className="text-sm font-semibold text-fairway-600">Edit</Text>
+          </Pressable>
+        </View>
+
+        {availLoading ? (
+          <ActivityIndicator color="#5b7040" className="my-3" />
+        ) : recurringSlots.length === 0 && oneOffSlots.length === 0 ? (
+          <Pressable
+            onPress={() => navigation.navigate("Availability")}
+            className="rounded-2xl border border-ink-200 bg-white p-4"
+          >
+            <Text className="text-sm text-ink-500">
+              No open hours yet. Add availability so players can request bookings.
+            </Text>
+          </Pressable>
+        ) : (
+          <View className="gap-2 rounded-2xl border border-ink-200 bg-white p-4">
+            {recurringSlots.map((s) => (
+              <View key={s.id} className="flex-row items-center gap-2">
+                <Ionicons name="repeat-outline" size={15} color={colors.fairway[600]} />
+                <Text className="text-sm text-ink-700">
+                  <Text className="font-semibold">{WEEKDAYS[s.weekday!]}</Text>
+                  {`  ${formatTime(s.startTime)} – ${formatTime(s.endTime)}`}
+                </Text>
+              </View>
+            ))}
+            {oneOffSlots.map((s) => (
+              <View key={s.id} className="flex-row items-center gap-2">
+                <Ionicons name="calendar-outline" size={15} color={colors.ink[500]} />
+                <Text className="text-sm text-ink-700">
+                  <Text className="font-semibold">{formatDate(s.date!)}</Text>
+                  {`  ${formatTime(s.startTime)} – ${formatTime(s.endTime)}`}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+
       {/* ── Save ── */}
       <Button
         title="Save Profile"
@@ -264,12 +324,23 @@ export default function CoachProfileScreen() {
         fullWidth
       />
 
-      {/* ── Account settings footer ── */}
-      <View className="mt-8 border-t border-ink-100 pt-5">
-        <Pressable onPress={() => navigation.navigate("Account")}>
-          <Text className="text-ink-500 font-semibold text-center text-sm">
-            Account settings
-          </Text>
+      {/* ── Account settings row ── */}
+      <View className="mb-10 mt-8">
+        <Text className="mb-2 text-xs font-bold uppercase tracking-widest text-ink-500">
+          More
+        </Text>
+        <Pressable
+          onPress={() => navigation.navigate("Account")}
+          className="flex-row items-center rounded-2xl border border-ink-200 bg-white px-4 py-3.5 active:opacity-90"
+        >
+          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-fairway-100">
+            <Ionicons name="settings-outline" size={18} color={colors.fairway[600]} />
+          </View>
+          <View className="flex-1">
+            <Text className="text-base font-semibold text-ink-900">Account settings</Text>
+            <Text className="text-xs text-ink-400">Notifications, privacy, sign out</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.ink[400]} />
         </Pressable>
       </View>
     </ScreenContainer>

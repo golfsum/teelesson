@@ -10,7 +10,7 @@ interface AvatarProps {
   className?: string;
 }
 
-/** Circular avatar — shows the photo if available, else colored initials. */
+/** Circular avatar, shows the photo if available, else colored initials. */
 export function Avatar({ name, uri, size = 44, className = "" }: AvatarProps) {
   if (uri) {
     return (

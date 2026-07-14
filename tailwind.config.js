@@ -11,30 +11,33 @@ module.exports = {
       colors: {
         // Earthy brand palette: olive greens, warm cream, slate/sage neutrals.
         fairway: {
-          50: "#f4f6ee",
-          100: "#e7ecd7",
-          200: "#cfd9b4",
-          300: "#b2c189",
-          400: "#8ea862",
-          500: "#6C844C", // primary brand olive
-          600: "#5b7040",
-          700: "#5F5933", // deep olive (headers, splash)
-          800: "#474328",
-          900: "#33311d",
+          50: "#ecfdf5",
+          100: "#d2f9e4",
+          200: "#9bf0c4",
+          300: "#5ce39f",
+          400: "#22d17b",
+          500: "#0aae63",
+          600: "#057545",
+          700: "#086e42",
+          800: "#075737",
+          900: "#05452e",
         },
         sand: {
-          50: "#fefcf6",
-          100: "#fdf3dd",
-          200: "#F9E6BF", // warm cream
+          50: "#fffaf0",
+          100: "#fff1d6",
+          200: "#ffe4ad",
         },
         ink: {
-          50: "#f5f7f6",
-          100: "#e9edec",
-          200: "#d4dbd9",
-          400: "#9CACA7", // muted sage
-          500: "#687a76",
-          700: "#3C505C", // slate text
-          900: "#26333b",
+          50: "#f5f8f7",
+          100: "#edf2f0",
+          200: "#d9e3df",
+          300: "#bdcbc6",
+          400: "#5f716b",
+          500: "#5b6d67",
+          600: "#455852",
+          700: "#30443e",
+          800: "#1b302a",
+          900: "#0b1f1a",
         },
       },
       fontFamily: {

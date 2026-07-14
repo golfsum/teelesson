@@ -9,7 +9,7 @@ import type { Lesson } from "@/types";
 
 interface LessonCardProps {
   lesson: Lesson;
-  /** Display name shown in the middle row — typically the player or coach name. */
+  /** Display name shown in the middle row, typically the player or coach name. */
   title?: string;
   onPress?: () => void;
   rightActions?: React.ReactNode;
@@ -25,6 +25,14 @@ export default function LessonCard({
   onPress,
   rightActions,
 }: LessonCardProps) {
+  // Distinct tag for non-individual sessions so the pro can spot them at a glance.
+  const typeTag =
+    lesson.type === "group"
+      ? { label: "Group", bg: "bg-sand-200", text: "text-fairway-800" }
+      : lesson.type === "review"
+      ? { label: "Review", bg: "bg-ink-100", text: "text-ink-700" }
+      : null;
+
   return (
     <Card onPress={onPress} className="gap-y-2">
       {/* ── Top row: date/time block + status badge ── */}
@@ -38,6 +46,13 @@ export default function LessonCard({
           </Text>
         </View>
         <View className="items-end gap-y-1">
+          {typeTag && (
+            <View className={`rounded-full px-2.5 py-0.5 ${typeTag.bg}`}>
+              <Text className={`text-[11px] font-bold uppercase tracking-wide ${typeTag.text}`}>
+                {typeTag.label}
+              </Text>
+            </View>
+          )}
           <StatusBadge status={lesson.status} />
           {lesson.paid && (
             <View className="flex-row items-center gap-x-1 rounded-full bg-fairway-100 px-2 py-0.5">
@@ -64,6 +79,9 @@ export default function LessonCard({
           {"  ·  "}
           {lesson.duration} min
         </Text>
+        {!!lesson.seriesId && (
+          <Ionicons name="repeat-outline" size={14} color={colors.ink[400]} />
+        )}
       </View>
 
       {/* ── Optional notes (truncated) ── */}

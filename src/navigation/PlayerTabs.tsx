@@ -19,12 +19,11 @@ export default function PlayerTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: { backgroundColor: colors.fairway[500] },
-        headerTintColor: colors.white,
-        headerTitleStyle: { fontWeight: "700" },
-        tabBarActiveTintColor: colors.white,
-        tabBarInactiveTintColor: "rgba(255,255,255,0.7)",
-        tabBarStyle: { backgroundColor: colors.fairway[500], borderTopWidth: 0 },
+        animation: "shift",
+        headerShown: false,
+        tabBarActiveTintColor: colors.fairway[400],
+        tabBarInactiveTintColor: "#d8e1de",
+        tabBarStyle: { backgroundColor: colors.navy, borderTopWidth: 0 },
         tabBarIcon: ({ color, size }) => (
           <Ionicons name={ICONS[route.name]} size={size} color={color} />
         ),

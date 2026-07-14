@@ -26,7 +26,7 @@ export function ScreenContainer({
   const insets = useSafeAreaInsets();
   const inner = (
     <View
-      className={`w-full self-center ${padded ? "px-4 py-4" : ""}`}
+      className={`w-full self-center ${padded ? "px-4 py-5" : ""}`}
       style={{ maxWidth }}
     >
       {children}
@@ -35,7 +35,7 @@ export function ScreenContainer({
 
   if (fixed) {
     return (
-      <View className="flex-1 bg-ink-50" style={{ paddingBottom: insets.bottom }}>
+      <View style={{ flex: 1, backgroundColor: "#f6faf8", paddingBottom: insets.bottom }}>
         {inner}
       </View>
     );
@@ -43,7 +43,8 @@ export function ScreenContainer({
 
   return (
     <ScrollView
-      className="flex-1 bg-ink-50"
+      style={{ flex: 1, backgroundColor: "#f6faf8" }}
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[{ paddingBottom: insets.bottom + 24 }, contentContainerStyle]}
       keyboardShouldPersistTaps="handled"
       {...rest}

@@ -1,5 +1,5 @@
 /**
- * LandingScreen — Marketing landing page for TeeLesson.
+ * LandingScreen, Marketing landing page for TeeLesson.
  * Web-first (maxWidth 1100), but renders cleanly on iOS / Android too.
  * AuthStack navigation -> Login | Signup
  */
@@ -15,7 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, Card } from "@/components/ui";
-import type { AuthStackParamList } from "@/navigation/types";
+import BrandMark from "@/components/brand-mark";
+import type { AuthStackParamList, InfoPage } from "@/navigation/types";
 import { colors } from "@/theme";
 
 type NavProp = NativeStackNavigationProp<AuthStackParamList>;
@@ -36,7 +37,7 @@ const BENEFITS = [
   {
     icon: "checkmark-done-outline" as const,
     title: "Booking Requests",
-    desc: "Players request, you approve or decline with one tap — no more phone tag.",
+    desc: "Players request, you approve or decline with one tap, no more phone tag.",
   },
   {
     icon: "cash-outline" as const,
@@ -64,7 +65,7 @@ const FEATURES = [
   {
     icon: "checkmark-done-outline" as const,
     title: "Approve in One Tap",
-    desc: "Every booking request lands in one place — approve or decline instantly and the player is notified.",
+    desc: "Every booking request lands in one place, approve or decline instantly and the player is notified.",
   },
   {
     icon: "cash-outline" as const,
@@ -74,7 +75,7 @@ const FEATURES = [
   {
     icon: "person-circle-outline" as const,
     title: "Public Booking Page",
-    desc: "A polished page with your bio, credentials, and booking link — your digital first impression and SEO front door.",
+    desc: "A polished page with your bio, credentials, and booking link, your digital first impression and SEO front door.",
   },
   {
     icon: "phone-portrait-outline" as const,
@@ -106,22 +107,24 @@ const PRICING = [
     price: "$29",
     period: "/mo",
     highlights: [
-      "Up to 20 active students",
+      "Up to 20 active players",
       "Lesson scheduling & booking",
       "Player CRM & lesson history",
-      "Payment tracking",
+      "Payment tracking (mark as paid)",
     ],
     cta: "Start Free Trial",
   },
   {
     tier: "Pro",
-    price: "$79",
+    price: "$49.99",
     period: "/mo",
     highlights: [
-      "Unlimited students",
+      "Everything in Basic, plus:",
+      "Unlimited players",
       "Public booking page",
-      "Recurring & one-off availability",
-      "Priority support",
+      "Group lessons & online review blocks",
+      "Player progress tracking",
+      "Recurring availability & priority support",
     ],
     cta: "Start Free Trial",
     featured: true,
@@ -164,42 +167,62 @@ function SectionSubtext({ text, light }: { text: string; light?: boolean }) {
 
 // ---------- section components -----------------------------------------
 
-function HeroSection({ onGetStarted, onDemo }: { onGetStarted: () => void; onDemo: () => void }) {
+function PreviewMetric({ icon, label, value, color }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string; color: string }) {
   return (
-    <View className="bg-fairway-700 w-full px-6 py-16 items-center">
-      {/* Brand wordmark */}
-      <View className="flex-row items-center mb-6 gap-2">
-        <Ionicons name="golf-outline" size={32} color={colors.fairway[300]} />
-        <Text className="text-fairway-300 font-extrabold text-xl tracking-tight">
-          TeeLesson
-        </Text>
+    <View style={{ flex: 1, minWidth: 130, borderWidth: 1, borderColor: colors.ink[200], borderRadius: 9, padding: 11, flexDirection: "row", alignItems: "center", gap: 9 }}>
+      <View style={{ width: 30, height: 30, borderRadius: 9, backgroundColor: `${color}12`, alignItems: "center", justifyContent: "center" }}><Ionicons name={icon} size={16} color={color} /></View>
+      <View><Text style={{ color: colors.ink[500], fontSize: 8.5 }}>{label}</Text><Text style={{ color: colors.ink[900], fontSize: 18, fontWeight: "800", marginTop: 2 }}>{value}</Text></View>
+    </View>
+  );
+}
+
+function ProductPreview() {
+  return (
+    <View style={{ flex: 1, minWidth: 0, borderRadius: 14, backgroundColor: colors.white, overflow: "hidden", boxShadow: "0 18px 50px rgba(0,0,0,0.28)" }}>
+      <View style={{ padding: 16 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}><Text style={{ color: colors.ink[900], fontSize: 18, fontWeight: "800" }}>Dashboard</Text><View style={{ width: 150, height: 28, borderRadius: 6, borderWidth: 1, borderColor: colors.ink[200], flexDirection: "row", alignItems: "center", paddingHorizontal: 8, gap: 5 }}><Ionicons name="search-outline" size={11} color={colors.ink[400]} /><Text style={{ color: colors.ink[400], fontSize: 8 }}>Search students…</Text></View></View>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+          <PreviewMetric icon="calendar-outline" label="Lessons this week" value="28" color={colors.fairway[600]} />
+          <PreviewMetric icon="cash-outline" label="Revenue this month" value="$7,650" color={colors.fairway[600]} />
+          <PreviewMetric icon="people-outline" label="Active students" value="42" color={colors.blue} />
+        </View>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <View style={{ flex: 1, borderRadius: 9, borderWidth: 1, borderColor: colors.ink[200], overflow: "hidden" }}>
+            <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: colors.ink[200] }}><Text style={{ color: colors.ink[900], fontSize: 10, fontWeight: "800" }}>Today’s Schedule</Text></View>
+            {["Ethan Thompson", "Sophia Martinez", "Jackson Lee"].map((name, index) => <View key={name} style={{ padding: 10, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: index === 0 ? colors.fairway[50] : colors.white, borderTopWidth: index ? 1 : 0, borderTopColor: colors.ink[200] }}><Text style={{ width: 38, color: colors.ink[900], fontSize: 8.5, fontWeight: "700" }}>{["10:30", "12:00", "1:30"][index]}</Text><View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: colors.fairway[100], alignItems: "center", justifyContent: "center" }}><Text style={{ color: colors.fairway[700], fontSize: 8, fontWeight: "800" }}>{name.split(" ").map((part) => part[0]).join("")}</Text></View><View style={{ flex: 1 }}><Text style={{ color: colors.ink[900], fontSize: 8.5, fontWeight: "700" }}>{name}</Text><Text style={{ color: colors.ink[500], fontSize: 7.5, marginTop: 2 }}>Lesson (45 min)</Text></View></View>)}
+          </View>
+          <View style={{ width: "34%", borderRadius: 9, borderWidth: 1, borderColor: colors.ink[200], padding: 10 }}><Text style={{ color: colors.ink[900], fontSize: 10, fontWeight: "800", marginBottom: 12 }}>Recent Activity</Text>{["Practice complete", "Video uploaded", "Payment received"].map((item, index) => <View key={item} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 11 }}><Ionicons name={["golf-outline", "play-outline", "cash-outline"][index] as keyof typeof Ionicons.glyphMap} size={12} color={index === 1 ? colors.blue : colors.fairway[600]} /><Text style={{ color: colors.ink[700], fontSize: 7.5 }}>{item}</Text></View>)}</View>
+        </View>
       </View>
+    </View>
+  );
+}
 
-      <Text className="text-white font-extrabold text-3xl text-center leading-tight mb-5 max-w-2xl">
-        The All-in-One Platform for Serious Golf Coaches
-      </Text>
-
-      <Text className="text-fairway-100 text-base text-center max-w-xl mb-10 leading-relaxed">
-        Stop juggling text messages and a paper calendar. Manage your roster,
-        take booking requests, and track who's paid — all in one simple,
-        easy-to-use app built for golf professionals.
-      </Text>
-
-      <View className="flex-row flex-wrap gap-3 justify-center">
-        <Button
-          title="Get Started Free – 14 Days"
-          variant="primary"
-          size="lg"
-          onPress={onGetStarted}
-          className="bg-white"
-        />
-        <Button
-          title="Watch 2-Min Demo"
-          variant="outline"
-          size="lg"
-          onPress={onDemo}
-          className="border-white"
-        />
+function HeroSection({ onGetStarted, onDemo, onSignIn }: { onGetStarted: () => void; onDemo: () => void; onSignIn: () => void }) {
+  const { width } = useWindowDimensions();
+  const desktop = width >= 900;
+  return (
+    <View style={{ width: "100%", backgroundColor: "#001b0d", paddingHorizontal: 24, paddingTop: 20, paddingBottom: desktop ? 58 : 44 }}>
+      <View style={{ width: "100%", maxWidth: 1200, alignSelf: "center" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: desktop ? 54 : 42 }}>
+          <BrandMark />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            {desktop ? <Pressable onPress={onSignIn} style={{ paddingHorizontal: 14, paddingVertical: 9 }}><Text style={{ color: colors.white, fontSize: 12, fontWeight: "700" }}>Sign in</Text></Pressable> : null}
+            <Pressable onPress={onGetStarted} style={{ borderRadius: 7, backgroundColor: colors.fairway[500], paddingHorizontal: 15, paddingVertical: 10 }}><Text style={{ color: colors.navy, fontSize: 12, fontWeight: "900" }}>Start free</Text></Pressable>
+          </View>
+        </View>
+        <View style={{ flexDirection: desktop ? "row" : "column", alignItems: "center", gap: desktop ? 54 : 38 }}>
+          <View style={{ width: desktop ? "37%" : "100%", alignItems: desktop ? "flex-start" : "center" }}>
+            <Text style={{ color: colors.white, fontSize: desktop ? 48 : 38, lineHeight: desktop ? 54 : 44, fontWeight: "800", letterSpacing: -1.7, textAlign: desktop ? "left" : "center" }}>Run your coaching.{"\n"}Grow your impact.</Text>
+            <Text style={{ color: "#c8d8cf", fontSize: desktop ? 16 : 15, lineHeight: 24, marginTop: 22, textAlign: desktop ? "left" : "center", maxWidth: 440 }}>Students, lessons, practice, progress, and payments in one focused workspace built for golf coaches.</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 28, justifyContent: desktop ? "flex-start" : "center" }}>
+              <Button title="Start coaching free" size="lg" onPress={onGetStarted} />
+              <Button title="View a coach profile" size="lg" variant="outline" onPress={onDemo} />
+            </View>
+            <Text style={{ color: "#8fa79a", fontSize: 10.5, marginTop: 14 }}>14 days free · No credit card required</Text>
+          </View>
+          <View style={{ width: desktop ? "63%" : "100%", maxWidth: 720 }}><ProductPreview /></View>
+        </View>
       </View>
     </View>
   );
@@ -210,7 +233,7 @@ function ProblemSection() {
     <View className="w-full px-6 py-14 items-center bg-ink-50">
       <SectionLabel text="Why TeeLesson" />
       <SectionHeading text="Tired of chaotic coaching schedules and lost student progress?" />
-      <SectionSubtext text="You got into golf coaching to teach — not to manage admin. TeeLesson handles the business side so you can focus on the lesson tee." />
+      <SectionSubtext text="You got into golf coaching to teach, not to manage admin. TeeLesson handles the business side so you can focus on the lesson tee." />
 
       <View className="flex-row flex-wrap gap-4 justify-center w-full">
         {BENEFITS.map((b) => (
@@ -236,7 +259,7 @@ function FeaturesSection({ columns }: { columns: number }) {
     <View className="w-full px-6 py-14 items-center bg-white">
       <SectionLabel text="Features" />
       <SectionHeading text="Built for Golf Coaches" />
-      <SectionSubtext text="Everything you need to run a professional coaching business — nothing you don't." />
+      <SectionSubtext text="Everything you need to run a professional coaching business, nothing you don't." />
 
       {/* Responsive grid: wrap into rows of `columns` */}
       <View
@@ -348,19 +371,25 @@ function PricingSection({ onGetStarted }: { onGetStarted: () => void }) {
                 <Text className="text-ink-500 text-base mb-1">{p.period}</Text>
               </View>
 
-              {p.highlights.map((h, i) => (
-                <View key={i} className="flex-row items-start gap-2 mb-2">
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={18}
-                    color={colors.fairway[600]}
-                    style={{ marginTop: 1 }}
-                  />
-                  <Text className="text-ink-700 text-sm flex-1">{h}</Text>
-                </View>
-              ))}
+              {p.highlights.map((h, i) =>
+                h.endsWith(":") ? (
+                  <Text key={i} className="text-ink-900 text-sm font-bold mb-2 mt-1">
+                    {h}
+                  </Text>
+                ) : (
+                  <View key={i} className="flex-row items-start gap-2 mb-2">
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={18}
+                      color={colors.fairway[600]}
+                      style={{ marginTop: 1 }}
+                    />
+                    <Text className="text-ink-700 text-sm flex-1">{h}</Text>
+                  </View>
+                )
+              )}
 
-              <View className="mt-6">
+              <View className="mt-auto pt-6">
                 <Button
                   title={p.cta}
                   variant={p.featured ? "primary" : "outline"}
@@ -392,22 +421,29 @@ function CtaBand({ onGetStarted }: { onGetStarted: () => void }) {
         size="lg"
         onPress={onGetStarted}
         className="bg-white"
+        textClassName="text-fairway-700"
       />
     </View>
   );
 }
 
 function FooterSection() {
-  const links = ["Features", "For Coaches", "Privacy", "Terms"];
+  const navigation = useNavigation<NavProp>();
+  const links: { label: string; page: InfoPage }[] = [
+    { label: "Features", page: "features" },
+    { label: "For Coaches", page: "forCoaches" },
+    { label: "Privacy", page: "privacy" },
+    { label: "Terms", page: "terms" },
+  ];
   const year = new Date().getFullYear();
 
   return (
     <View className="w-full bg-fairway-700 px-6 py-8 items-center">
       <View className="flex-row flex-wrap gap-6 justify-center mb-5">
         {links.map((l) => (
-          <Text key={l} className="text-fairway-200 text-sm font-medium">
-            {l}
-          </Text>
+          <Pressable key={l.page} onPress={() => navigation.navigate("Info", { page: l.page })}>
+            <Text className="text-fairway-200 text-sm font-medium">{l.label}</Text>
+          </Pressable>
         ))}
       </View>
       <Text className="text-fairway-400 text-xs text-center">
@@ -426,8 +462,8 @@ export default function LandingScreen() {
   const featureColumns = width >= 900 ? 3 : 1;
 
   const goSignup = () => navigation.navigate("Signup");
-  // Demo navigates to Signup for now — replace with modal/video link when available
-  const goDemo = () => navigation.navigate("Signup");
+  const goDemo = () => navigation.navigate("PublicCoachProfile", { slug: "demo-coach" });
+  const goSignIn = () => navigation.navigate("Login");
 
   return (
     <ScrollView
@@ -436,27 +472,26 @@ export default function LandingScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* Each section fills the viewport width; inner content is capped at 1100 */}
-      <View style={{ width: "100%", maxWidth: 1100, alignSelf: "center" }}>
+      <View style={{ width: "100%", alignSelf: "center" }}>
 
-        {/* 1 — HERO */}
-        <HeroSection onGetStarted={goSignup} onDemo={goDemo} />
+        {/* 1, HERO */}
+        <HeroSection onGetStarted={goSignup} onDemo={goDemo} onSignIn={goSignIn} />
 
-        {/* 2 — PROBLEM / BENEFITS */}
+        {/* 2, PROBLEM / BENEFITS */}
         <ProblemSection />
 
-        {/* 3 — FEATURES */}
+        {/* 3, FEATURES */}
         <FeaturesSection columns={featureColumns} />
 
-        {/* 4 — TESTIMONIALS */}
-        <TestimonialsSection />
+        {/* TESTIMONIALS hidden for now */}
 
-        {/* 5 — PRICING */}
+        {/* 5, PRICING */}
         <PricingSection onGetStarted={goSignup} />
 
-        {/* 6 — CTA BAND */}
+        {/* 6, CTA BAND */}
         <CtaBand onGetStarted={goSignup} />
 
-        {/* 7 — FOOTER */}
+        {/* 7, FOOTER */}
         <FooterSection />
       </View>
     </ScrollView>

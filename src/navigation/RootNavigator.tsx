@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
 import {
   NavigationContainer,
@@ -23,10 +23,12 @@ import LandingScreen from "@/screens/LandingScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignupScreen from "@/screens/auth/SignupScreen";
 import PublicCoachProfileScreen from "@/screens/PublicCoachProfileScreen";
+import InfoScreen from "@/screens/InfoScreen";
 
 // Shared / coach detail screens
 import PlayerProfileScreen from "@/screens/coach/PlayerProfileScreen";
 import AddLessonScreen from "@/screens/coach/AddLessonScreen";
+import LogProgressScreen from "@/screens/coach/LogProgressScreen";
 import AvailabilityScreen from "@/screens/coach/AvailabilityScreen";
 import InvitePlayerScreen from "@/screens/coach/InvitePlayerScreen";
 import AccountScreen from "@/screens/AccountScreen";
@@ -43,9 +45,9 @@ const navTheme = {
   colors: {
     ...DefaultTheme.colors,
     primary: colors.fairway[600],
-    background: colors.ink[50],
-    card: colors.fairway[500],
-    text: colors.white,
+    background: colors.forestCanvas,
+    card: colors.white,
+    text: colors.ink[900],
     border: colors.ink[200],
   },
 };
@@ -59,14 +61,20 @@ const linking: LinkingOptions<AuthStackParamList> = {
       Login: "login",
       Signup: "signup",
       PublicCoachProfile: "coach/:slug",
+      Info: "info/:page",
     },
   },
 };
 
 const headerOptions = {
-  headerStyle: { backgroundColor: colors.fairway[500] },
-  headerTintColor: colors.white,
+  headerStyle: { backgroundColor: colors.forestCanvas },
+  headerTintColor: colors.ink[900],
   headerTitleStyle: { fontWeight: "700" as const },
+  headerShadowVisible: false,
+  // Clean, consistent back button across every stack screen, the whole
+  // chevron + "Back" label is tappable (native-stack default).
+  headerBackTitle: "Back",
+  headerBackButtonDisplayMode: "default" as const,
 };
 
 function AuthNavigator() {
@@ -90,12 +98,17 @@ function AuthNavigator() {
       <AuthStack.Screen
         name="Signup"
         component={SignupScreen}
-        options={{ headerShown: true, title: "Create Account", ...headerOptions }}
+        options={{ headerShown: !isWeb, title: "Create Account", ...headerOptions }}
       />
       <AuthStack.Screen
         name="PublicCoachProfile"
         component={PublicCoachProfileScreen}
         options={{ headerShown: false }}
+      />
+      <AuthStack.Screen
+        name="Info"
+        component={InfoScreen}
+        options={{ headerShown: true, title: "TeeLesson", ...headerOptions }}
       />
     </AuthStack.Navigator>
   );
@@ -111,6 +124,7 @@ function CoachNavigator() {
       />
       <CoachStack.Screen name="PlayerProfile" component={PlayerProfileScreen} options={{ title: "Player" }} />
       <CoachStack.Screen name="AddLesson" component={AddLessonScreen} options={{ title: "New Lesson" }} />
+      <CoachStack.Screen name="LogProgress" component={LogProgressScreen} options={{ title: "Log Measurement" }} />
       <CoachStack.Screen name="Availability" component={AvailabilityScreen} options={{ title: "Availability" }} />
       <CoachStack.Screen name="InvitePlayer" component={InvitePlayerScreen} options={{ title: "Invite Player" }} />
       <CoachStack.Screen name="Account" component={AccountScreen} options={{ title: "Account" }} />
@@ -135,6 +149,34 @@ function PlayerNavigator() {
 
 export default function RootNavigator() {
   const { user, initializing, isCoach } = useAuth();
+
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof document === "undefined") return;
+    const ensureMeta = (selector: string, attributes: Record<string, string>) => {
+      let element = document.head.querySelector<HTMLMetaElement>(selector);
+      if (!element) {
+        element = document.createElement("meta");
+        document.head.appendChild(element);
+      }
+      Object.entries(attributes).forEach(([name, value]) => element!.setAttribute(name, value));
+    };
+    ensureMeta('meta[name="description"]', { name: "description", content: "Run your golf coaching business with student CRM, scheduling, practice plans, progress tracking, and payment status in one workspace." });
+    ensureMeta('meta[name="robots"]', { name: "robots", content: user ? "noindex,nofollow" : "index,follow,max-image-preview:large" });
+    ensureMeta('meta[property="og:title"]', { property: "og:title", content: "TeeLesson | Golf coach management software" });
+    ensureMeta('meta[property="og:description"]', { property: "og:description", content: "Students, lessons, practice, progress, and payments in one focused coaching workspace." });
+    ensureMeta('meta[property="og:type"]', { property: "og:type", content: "website" });
+    ensureMeta('meta[property="og:url"]', { property: "og:url", content: "https://teelesson.app/" });
+    ensureMeta('meta[property="og:image"]', { property: "og:image", content: "https://teelesson.app/social-card.png" });
+    ensureMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
+    ensureMeta('meta[name="twitter:image"]', { name: "twitter:image", content: "https://teelesson.app/social-card.png" });
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
+    }
+    canonical.href = `https://teelesson.app${window.location.pathname === "/" ? "/" : window.location.pathname}`;
+  }, [user]);
 
   if (initializing) {
     return (

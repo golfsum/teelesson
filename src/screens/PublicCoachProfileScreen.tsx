@@ -115,10 +115,10 @@ export default function PublicCoachProfileScreen() {
   // ── Book a Lesson handler ─────────────────────────────────────────────────
   function handleBookLesson() {
     if (!user) {
-      // Unauthenticated — send to sign-up pre-filled for this coach
+      // Unauthenticated, send to sign-up pre-filled for this coach
       navigation.navigate("Signup", { coachId: coach!.id, role: "player" });
     } else {
-      // Signed-in player — go to the booking flow (PlayerStack)
+      // Signed-in player, go to the booking flow (PlayerStack)
       navigation.navigate("BookLesson");
     }
   }

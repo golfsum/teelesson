@@ -1,7 +1,7 @@
 /**
- * AvailabilityScreen — Coach sets recurring weekly availability windows.
+ * AvailabilityScreen, Coach sets recurring weekly availability windows.
  *
- * Section 1: Add a recurring slot — pick weekday, start/end time, lesson type.
+ * Section 1: Add a recurring slot, pick weekday, start/end time, lesson type.
  * Section 2: View all slots grouped into Recurring and One-off, with delete.
  */
 import React, { useState } from "react";

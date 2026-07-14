@@ -60,13 +60,14 @@ export default function SignupScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-fairway-50"
+      className="flex-1 bg-white"
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         contentContainerClassName="flex-grow justify-center px-6 py-10"
         keyboardShouldPersistTaps="handled"
       >
+        <View className="w-full self-center" style={{ maxWidth: 520 }}>
         {/* Header */}
         <View className="mb-8 items-center">
           <Text className="text-3xl font-extrabold text-fairway-700 tracking-tight">
@@ -77,7 +78,7 @@ export default function SignupScreen() {
           </Text>
         </View>
 
-        {/* Invite banner — shown only when joining via coach invite */}
+        {/* Invite banner, shown only when joining via coach invite */}
         {forcedPlayer && (
           <View className="mb-6 rounded-2xl bg-fairway-100 border border-fairway-300 px-4 py-3">
             <Text className="text-sm font-semibold text-fairway-700 text-center">
@@ -89,7 +90,7 @@ export default function SignupScreen() {
           </View>
         )}
 
-        {/* Role selector — hidden when role is forced */}
+        {/* Role selector, hidden when role is forced */}
         {!forcedPlayer && (
           <View className="mb-6">
             <Text className="mb-2 text-sm font-semibold text-ink-700">
@@ -99,7 +100,7 @@ export default function SignupScreen() {
               <Pressable
                 onPress={() => setRole("coach")}
                 className={[
-                  "flex-1 rounded-2xl border py-3 items-center",
+                  "flex-1 rounded-lg border py-3 items-center",
                   role === "coach"
                     ? "bg-fairway-600 border-fairway-600"
                     : "bg-white border-ink-200",
@@ -118,7 +119,7 @@ export default function SignupScreen() {
               <Pressable
                 onPress={() => setRole("player")}
                 className={[
-                  "flex-1 rounded-2xl border py-3 items-center",
+                  "flex-1 rounded-lg border py-3 items-center",
                   role === "player"
                     ? "bg-fairway-600 border-fairway-600"
                     : "bg-white border-ink-200",
@@ -195,6 +196,7 @@ export default function SignupScreen() {
               Log in
             </Text>
           </Pressable>
+        </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

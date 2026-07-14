@@ -23,19 +23,29 @@ interface CalendarStripProps {
   selectedDate: string;
   onSelect: (iso: string) => void;
   markedDates?: string[];
+  /** How many lessons each date holds, drives the colour-coded load badge. */
+  loadByDate?: Record<string, number>;
   /** Number of days to show starting from today. Default 14. */
   days?: number;
+}
+
+/** Background colour tier for a day's booking load. */
+function loadTierBg(count: number): string {
+  if (count >= 5) return "bg-fairway-700"; // busy
+  if (count >= 3) return "bg-fairway-500"; // moderate
+  return "bg-fairway-300"; // light
 }
 
 /**
  * Horizontal scrollable strip of day pills.
  * Tapping a pill fires onSelect with its ISO date string.
- * A small dot appears below dates present in markedDates.
+ * Days with lessons show a colour-coded count badge (darker = busier).
  */
 export default function CalendarStrip({
   selectedDate,
   onSelect,
   markedDates = [],
+  loadByDate,
   days = 14,
 }: CalendarStripProps) {
   const scrollRef = useRef<ScrollView>(null);
@@ -48,6 +58,8 @@ export default function CalendarStrip({
   );
 
   const markedSet = new Set(markedDates);
+  const loadFor = (iso: string): number =>
+    loadByDate ? loadByDate[iso] ?? 0 : markedSet.has(iso) ? 1 : 0;
 
   // Scroll to the selected date on mount / when selectedDate changes.
   useEffect(() => {
@@ -71,7 +83,7 @@ export default function CalendarStrip({
         const weekday = WEEKDAY_ABBREVS[d.getDay()];
         const dayNum = d.getDate();
         const isSelected = iso === selectedDate;
-        const isMarked = markedSet.has(iso);
+        const load = loadFor(iso);
 
         return (
           <Pressable
@@ -106,17 +118,19 @@ export default function CalendarStrip({
               {dayNum}
             </Text>
 
-            {/* Marked-date indicator dot */}
-            {isMarked ? (
+            {/* Booking-load badge (colour-coded by count) */}
+            {load > 0 ? (
               <View
                 className={[
-                  "w-1.5 h-1.5 rounded-full mt-1",
-                  isSelected ? "bg-white/70" : "bg-fairway-500",
+                  "mt-1 h-4 min-w-[16px] items-center justify-center rounded-full px-1",
+                  isSelected ? "bg-white/25" : loadTierBg(load),
                 ].join(" ")}
-              />
+              >
+                <Text className="text-[10px] font-bold text-white">{load}</Text>
+              </View>
             ) : (
-              // Reserve the dot space so pill height stays consistent.
-              <View className="w-1.5 h-1.5 mt-1" />
+              // Reserve the badge space so pill height stays consistent.
+              <View className="mt-1 h-4" />
             )}
           </Pressable>
         );

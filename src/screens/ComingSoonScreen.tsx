@@ -3,7 +3,7 @@
  *
  * Full-screen holding page shown in production while the app is pre-launch.
  * Gated in App.tsx by the EXPO_PUBLIC_COMING_SOON flag, so it has no auth /
- * navigation / data dependencies — it renders on its own.
+ * navigation / data dependencies, it renders on its own.
  */
 import React from "react";
 import { Linking, Pressable, Text, View, useWindowDimensions } from "react-native";
@@ -24,7 +24,7 @@ export default function ComingSoonScreen() {
     Linking.openURL(
       `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Early access to TeeLesson")}`
     ).catch(() => {
-      // No mail client available (e.g. some browsers) — fail quietly.
+      // No mail client available (e.g. some browsers), fail quietly.
     });
   };
 
@@ -63,7 +63,7 @@ export default function ComingSoonScreen() {
         <Text className="mt-4 text-center text-base leading-relaxed text-fairway-100">
           A simpler way for golf coaches to manage their roster, take lesson
           booking requests, and share one booking page. We&apos;re putting on the
-          finishing touches — launching soon.
+          finishing touches, launching soon.
         </Text>
 
         {/* CTA */}

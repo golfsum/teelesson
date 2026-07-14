@@ -1,16 +1,16 @@
 /**
  * Lightweight dashboard charts built on react-native-svg (donuts) and plain
- * Views (bars). No external charting dependency — keeps the bundle small and
+ * Views (bars). No external charting dependency, keeps the bundle small and
  * renders identically on web, iOS, and Android.
  */
 import React from "react";
 import { Text, View } from "react-native";
-import Svg, { Circle } from "react-native-svg";
+import Svg, { Circle, Polyline } from "react-native-svg";
 
 const TRACK = "#e3e9e6";
 
 // ---------------------------------------------------------------------------
-// DonutRing — a single-value progress ring with arbitrary centered content.
+// DonutRing, a single-value progress ring with arbitrary centered content.
 // ---------------------------------------------------------------------------
 
 interface DonutRingProps {
@@ -62,7 +62,7 @@ export function DonutRing({
 }
 
 // ---------------------------------------------------------------------------
-// SegmentDonut — multi-segment donut (e.g. lessons by status) + centered total.
+// SegmentDonut, multi-segment donut (e.g. lessons by status) + centered total.
 // ---------------------------------------------------------------------------
 
 export interface DonutSegment {
@@ -94,7 +94,7 @@ export function SegmentDonut({
   return (
     <View style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}>
       <Svg width={size} height={size}>
-        {/* Track — also the fallback when there's no data yet. */}
+        {/* Track, also the fallback when there's no data yet. */}
         <Circle cx={c} cy={c} r={r} stroke={TRACK} strokeWidth={strokeWidth} fill="none" />
         {total > 0 &&
           segments
@@ -127,7 +127,69 @@ export function SegmentDonut({
 }
 
 // ---------------------------------------------------------------------------
-// MiniBars — compact monthly bar chart drawn with Views (no SVG needed).
+// Sparkline, tiny trend line for a short numeric series.
+// ---------------------------------------------------------------------------
+
+interface SparklineProps {
+  values: number[];
+  color?: string;
+  width?: number;
+  height?: number;
+  strokeWidth?: number;
+}
+
+export function Sparkline({
+  values,
+  color = "#3C505C",
+  width = 110,
+  height = 36,
+  strokeWidth = 2,
+}: SparklineProps) {
+  if (values.length < 2) {
+    // Single point, render a flat baseline so the slot isn't empty.
+    const y = height / 2;
+    return (
+      <Svg width={width} height={height}>
+        <Polyline
+          points={`0,${y} ${width},${y}`}
+          fill="none"
+          stroke={TRACK}
+          strokeWidth={strokeWidth}
+        />
+      </Svg>
+    );
+  }
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const pad = strokeWidth;
+  const stepX = width / (values.length - 1);
+
+  const points = values
+    .map((v, i) => {
+      const x = i * stepX;
+      const y = height - pad - ((v - min) / range) * (height - pad * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  return (
+    <Svg width={width} height={height}>
+      <Polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// MiniBars, compact monthly bar chart drawn with Views (no SVG needed).
 // ---------------------------------------------------------------------------
 
 export interface BarDatum {

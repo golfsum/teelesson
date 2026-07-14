@@ -2,7 +2,7 @@
  * Firebase initialization for TeeLesson.
  *
  * Config values are read from EXPO_PUBLIC_* environment variables (see
- * `.env.example`). They are safe to expose in a client bundle — Firebase
+ * `.env.example`). They are safe to expose in a client bundle, Firebase
  * security is enforced by Firestore/Storage rules, not by hiding these keys.
  *
  * Auth uses indexedDB persistence on web and React Native AsyncStorage

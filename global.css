@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* React Native Web expresses placeholder color through a CSS variable. Keep a
+   concrete fallback so browser accessibility engines evaluate the same color. */
+input::placeholder,
+textarea::placeholder {
+  color: #5f716b !important;
+  opacity: 1;
+}
+
+html,
+body,
+#root {
+  background: #f6faf8;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+::selection {
+  color: #031d18;
+  background: #9bf0c4;
+}

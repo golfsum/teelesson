@@ -6,12 +6,12 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "teelesson",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#5F5933"
+      "backgroundColor": "#07171d"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -23,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#5F5933"
+        "backgroundColor": "#07171d"
       },
       "package": "com.teelesson.app"
     },
@@ -33,8 +33,8 @@
       "favicon": "./assets/favicon.png",
       "name": "TeeLesson - Golf Coach Software",
       "shortName": "TeeLesson",
-      "description": "Manage your roster, take lesson booking requests, and share a public booking page — built for independent golf coaches.",
-      "themeColor": "#6C844C",
+      "description": "Manage your roster, take lesson booking requests, and share a public booking page built for independent golf coaches.",
+      "themeColor": "#087c34",
       "backgroundColor": "#ffffff",
       "lang": "en"
     },

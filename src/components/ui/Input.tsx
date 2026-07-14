@@ -27,10 +27,14 @@ export function Input({
       <TextInput
         placeholderTextColor={colors.ink[400]}
         multiline={multiline}
-        className={`rounded-xl border bg-white px-4 py-3 text-base text-ink-900 ${
-          error ? "border-red-400" : "border-ink-200"
+        className={`rounded-xl border bg-white px-3.5 py-3 text-sm text-ink-900 ${
+          error ? "border-red-400" : "border-ink-300"
         } ${multiline ? "h-24" : ""} ${className}`}
-        style={multiline ? { textAlignVertical: "top" } : undefined}
+        style={{
+          borderCurve: "continuous",
+          boxShadow: "inset 0 1px 2px rgba(3, 29, 24, 0.025)",
+          ...(multiline ? { textAlignVertical: "top" as const } : {}),
+        }}
         {...rest}
       />
       {error ? <Text className="text-xs text-red-600">{error}</Text> : null}

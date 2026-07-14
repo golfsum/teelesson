@@ -34,7 +34,7 @@ function MetaRow({
 }
 
 /**
- * Grid tile for a player — avatar + name, an active/inactive status pill, and
+ * Grid tile for a player, avatar + name, an active/inactive status pill, and
  * handicap / lesson-count metadata rows. Themed in fairway green.
  */
 export default function PlayerGridCard({
@@ -49,7 +49,7 @@ export default function PlayerGridCard({
 
   return (
     <Card onPress={onPress} className="relative gap-y-3">
-      {/* Status pill — top-right corner */}
+      {/* Status pill, top-right corner */}
       <View
         className={`absolute right-3 top-3 rounded-full px-2.5 py-1 ${
           active ? "bg-fairway-500" : "bg-ink-200"

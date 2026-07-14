@@ -2,7 +2,7 @@
 
 **Lesson Management & Booking Platform for Golf Pros**
 
-Manage players, schedule lessons, share lesson plans, and review swing videos —
+Manage players, schedule lessons, share lesson plans, and review swing videos
 in one clean platform built for independent golf coaches and teaching pros.
 Runs on **iOS, Android, and the web** from a single Expo + React Native codebase,
 with a **Firebase** backend and a responsive web dashboard for full management.
@@ -14,8 +14,8 @@ with a **Firebase** backend and a responsive web dashboard for full management.
 | Layer | Choice |
 |-------|--------|
 | App | React Native 0.81 + **Expo SDK 54** (iOS / Android / Web) |
-| Styling | **NativeWind v4** (Tailwind classes) — golf-green professional theme |
-| Backend | **Firebase** — Auth, Firestore, Storage |
+| Styling | **NativeWind v4** (Tailwind classes), golf-green professional theme |
+| Backend | **Firebase**: Auth, Firestore, Storage |
 | Data/State | **TanStack Query** + Firestore realtime listeners |
 | Navigation | **React Navigation v7** (native-stack + bottom-tabs) |
 | Web hosting | **Vercel** (`expo export -p web` → static `dist/`) |
@@ -29,31 +29,33 @@ with a **Firebase** backend and a responsive web dashboard for full management.
 booking + a shareable page. Charge from day one; let coach requests decide what's
 built next.
 
-- **Auth & roles** — email/password + Google sign-in; `coach` and `player` roles
+- **Auth & roles**: email/password + Google sign-in; `coach` and `player` roles
   with role-based navigation and Firestore-enforced access. Players join via a
-  coach **invite link** — keep the player side minimal (book + view only).
-- **Coach dashboard** — responsive web layout: active players, lessons this month,
+  coach **invite link**. Keep the player side minimal (book + view only).
+- **Coach dashboard**: responsive web layout with active players, lessons this month,
   pending booking requests, and quick actions.
-- **Player CRM** — searchable roster; profiles with contact, handicap, goals,
-  private notes, and lesson history; invite via link.
-- **Scheduling & booking** — coach availability (recurring + one-off), player
-  booking requests, one-tap approve/decline, agenda calendar view.
-  *(This is the feature they pay for.)*
-- **Public booking page** — shareable `/coach/{slug}` that serves as both the
+- **Player CRM**: searchable roster; profiles with contact, handicap, goals,
+  private notes, lesson history, and **progress tracking** (handicap, scoring
+  average, GIR, fairways, putts, driving distance over time); invite via link.
+- **Scheduling & booking**: coach availability (recurring + one-off), player
+  booking requests, one-tap approve/decline, agenda calendar view. Supports
+  individual lessons, **group sessions / classes** (multiple players), and
+  player-less **online review blocks**. *(This is the feature they pay for.)*
+- **Public booking page**: shareable `/coach/{slug}` that serves as both the
   booking entry point **and** the SEO marketing page (one page, two jobs).
-- **Lesson payment status** — a simple "mark as paid" toggle per lesson for the
+- **Lesson payment status**: a simple "mark as paid" toggle per lesson for the
   coach's own tracking. No payment processing yet.
 
 ## Later (post-MVP, build once coaches are using it)
 
-- **In-app payments** — Stripe (take payment at booking). Replaces the manual paid
+- **In-app payments**: Stripe (take payment at booking). Replaces the manual paid
   toggle.
-- **Lesson plans** — reusable drills/goals/attachments shared per player.
-- **Video review** — start with **link attach** (YouTube/cloud) on a lesson note
+- **Lesson plans**: reusable drills/goals/attachments shared per player.
+- **Video review**: start with **link attach** (YouTube/cloud) on a lesson note
   for zero storage cost; only build native upload + comments + **drawing overlay**
   + **side-by-side comparison** when paying coaches ask, and gate it behind a
   higher tier to cover storage/bandwidth.
-- **Messaging** — lightweight 1:1 coach ↔ player chat.
+- **Messaging**: lightweight 1:1 coach ↔ player chat.
 
 ---
 
@@ -104,7 +106,7 @@ npx expo install --fix
    Copy-Item .env.example .env
    ```
    Fill in each `EXPO_PUBLIC_FIREBASE_*` value. (These are safe to ship in a
-   client bundle — access is enforced by the security rules.)
+   client bundle. Access is enforced by the security rules.)
 4. Deploy the security rules + indexes:
    ```powershell
    npm install -g firebase-tools
@@ -118,9 +120,15 @@ Drop `icon.png`, `adaptive-icon.png`, `splash.png`, and `favicon.png` into
 
 ### 5. Run
 ```powershell
-npx expo start
+npm run web
+# opens the current web app on http://localhost:19006
+
+npm start
 # press w → web · i → iOS simulator · a → Android emulator
 ```
+
+The same responsive dashboard source is used by web, Expo Go, iOS, and
+Android. The dedicated web port is also available as `npm run web:19006`.
 
 ### 6. Type-check
 ```powershell
@@ -158,8 +166,9 @@ Set your real `eas.projectId` in `app.json` and bundle identifiers as needed.
 
 | Collection | Key fields |
 |------------|-----------|
-| `users/{uid}` | `name, email, role, photoURL, coachId?, handicap?, goals?, notes?, bio?, specialties?, publicSlug?` |
-| `lessons` | `coachId, playerId, date, startTime, duration, type, status, notes, paid?` |
+| `users/{uid}` | `name, email, role, photoURL, coachId?, handicap?, goals?, goalItems?, notes?, bio?, specialties?, publicSlug?` |
+| `lessons` | `coachId, playerId?, playerIds?, title?, seriesId?, date, startTime, duration, type, status, notes, paid?` |
+| `progress` | `coachId, playerId, date, handicap?, scoringAverage?, gir?, fairways?, putts?, drivingDistance?, upDown?, sandSaves?, threePutts?` |
 | `availability` | `coachId, date?/weekday?, recurring, startTime, endTime, type?` |
 
 Security rules (`firestore.rules`, `storage.rules`): coaches own their data;

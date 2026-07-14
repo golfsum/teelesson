@@ -42,12 +42,18 @@ export function useLessons(opts: { coachId?: string; playerId?: string }) {
   const upcoming = useMemo(
     () =>
       lessons
-        .filter((l) => l.date >= today && l.status !== "cancelled")
+        .filter(
+          (l) =>
+            l.date >= today && l.status !== "cancelled" && l.status !== "noShow"
+        )
         .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime)),
     [lessons, today]
   );
   const past = useMemo(
-    () => lessons.filter((l) => l.date < today || l.status === "completed"),
+    () =>
+      lessons.filter(
+        (l) => l.date < today || l.status === "completed" || l.status === "noShow"
+      ),
     [lessons, today]
   );
   const pending = useMemo(
@@ -67,6 +73,19 @@ export function useLessons(opts: { coachId?: string; playerId?: string }) {
     approveLesson: (id: string) => updateLesson(id, { status: "confirmed" }),
     cancelLesson: (id: string) => updateLesson(id, { status: "cancelled" }),
     completeLesson: (id: string) => updateLesson(id, { status: "completed" }),
+    noShowLesson: (id: string) => updateLesson(id, { status: "noShow" }),
     setPaid: (id: string, paid: boolean) => updateLesson(id, { paid }),
+    /** Cancel every still-active session in a recurring series. */
+    cancelSeries: (seriesId: string) =>
+      Promise.all(
+        lessons
+          .filter(
+            (l) =>
+              l.seriesId === seriesId &&
+              l.status !== "cancelled" &&
+              l.status !== "completed"
+          )
+          .map((l) => updateLesson(l.id, { status: "cancelled" }))
+      ),
   };
 }
