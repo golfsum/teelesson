@@ -55,14 +55,14 @@ rasterize either reference.
 ## Acceptance checks
 
 - The desktop dashboard has a persistent forest sidebar, timeframe controls,
-  a coaching brief, five compact business metrics, AI Coach, a dominant Operations Hub, rich Student Spotlight,
+  a coaching brief, five compact business metrics, a dominant Operations Hub, rich Student Spotlight,
   Performance, Upcoming Lessons, Communication Center, and Today’s Wins.
 - The Action Center includes booking, payment, homework, video, and parent
   priorities. Every row opens the matching working route.
 - The operational canvas has no dashboard maximum width and expands fluidly
   between the unchanged navigation rail and the window edge.
 - Phones show the same combined dashboard with two-column business metrics,
-  AI Coach, stacked Operations Hub, Student Spotlight, Performance,
+  stacked Operations Hub, Student Spotlight, Performance,
   Communication Center, Today’s Wins, and a five-action bottom bar.
 - Every visible control used by a critical flow is reachable and functional.
 - Typecheck, web export, browser flows, and visual coverage pass without console

@@ -50,7 +50,10 @@ const pid = (n: number) => `demo-p${n}`;
 function isoOffset(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 const PLAYER_SEED: Array<{
@@ -59,11 +62,11 @@ const PLAYER_SEED: Array<{
   goals: string;
   phone: string;
 }> = [
-  { name: "Olivia Bennett", handicap: 8.4, goals: "Tighten up the short game", phone: "(555) 014-2280" },
-  { name: "Liam Carter", handicap: 14.2, goals: "Break 90 this season", phone: "(555) 014-2281" },
-  { name: "Emma Davis", handicap: 22.0, goals: "More consistent ball striking", phone: "(555) 014-2282" },
-  { name: "Noah Evans", handicap: 5.1, goals: "Add 15 yards off the tee", phone: "(555) 014-2283" },
-  { name: "Ava Foster", handicap: 18.7, goals: "Fix the slice", phone: "(555) 014-2284" },
+  { name: "Alex Rivera", handicap: 12.4, goals: "Full Swing", phone: "(555) 014-2280" },
+  { name: "Jordan Kim", handicap: 4.2, goals: "Driver", phone: "(555) 014-2281" },
+  { name: "Taylor Brooks", handicap: 18.7, goals: "Short Game", phone: "(555) 014-2282" },
+  { name: "Morgan Lee", handicap: 6.1, goals: "Putting", phone: "(555) 014-2283" },
+  { name: "Casey Nguyen", handicap: 14.3, goals: "Irons", phone: "(555) 014-2284" },
   { name: "William Grant", handicap: 11.3, goals: "Lower scoring average", phone: "(555) 014-2285" },
   { name: "Sophia Hayes", goals: "Learn the fundamentals", phone: "(555) 014-2286" },
   { name: "James Irwin", handicap: 3.2, goals: "Sharpen wedge distances", phone: "(555) 014-2287" },

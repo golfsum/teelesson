@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const port = process.env.PLAYWRIGHT_PORT ?? "19006";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: false,
@@ -7,7 +10,7 @@ export default defineConfig({
   workers: 1,
   reporter: "line",
   use: {
-    baseURL: "http://127.0.0.1:19006",
+    baseURL,
     channel: "chrome",
     colorScheme: "light",
     screenshot: "only-on-failure",
@@ -17,8 +20,8 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1536, height: 1024 } } },
   ],
   webServer: {
-    command: "npx expo start --web --port 19006",
-    url: "http://127.0.0.1:19006",
+    command: `npx expo start --web --port ${port}`,
+    url: baseURL,
     reuseExistingServer: true,
     timeout: 120_000,
     env: { CI: "1" },

@@ -38,7 +38,7 @@ technical forest-white visual system:
 3. Timeframe-aware coaching brief with workload and attention indicators
 4. Five chart-led business metrics
 5. A fluid two-column work area with Operations Hub as the primary surface
-6. Dark forest AI Coach and a golf-specific Student Spotlight
+6. A golf-specific Student Spotlight paired with the Operations Hub
 7. Full-width recent activity, then Performance, Upcoming Lessons,
    Communication Center, and Today's Wins
 

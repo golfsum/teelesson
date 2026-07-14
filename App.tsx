@@ -16,12 +16,13 @@ import ComingSoonScreen from "@/screens/ComingSoonScreen";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 /**
- * Pre-launch holding page. Set EXPO_PUBLIC_COMING_SOON=1 in the production
+ * Pre-launch holding page. Set EXPO_PUBLIC_COMING_SOON=true in the production
  * (Vercel) environment to show the coming-soon page instead of the full app.
  * Leave it unset locally to work on the real app. Remove the var + redeploy to
  * go live.
  */
-const COMING_SOON = process.env.EXPO_PUBLIC_COMING_SOON === "1";
+const comingSoonFlag = process.env.EXPO_PUBLIC_COMING_SOON?.toLowerCase();
+const COMING_SOON = comingSoonFlag === "1" || comingSoonFlag === "true";
 
 export default function App() {
   // Preload the icon font so glyphs render correctly on the first frame

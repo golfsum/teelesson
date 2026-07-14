@@ -91,7 +91,7 @@ for (const device of devices) {
   });
 }
 
-test("capture phone navigation and AI Coach states", async ({ browser }) => {
+test("capture phone navigation state", async ({ browser }) => {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await page.goto("/");
   const stateRoot = path.join(visualRoot, "phone");
@@ -100,17 +100,5 @@ test("capture phone navigation and AI Coach states", async ({ browser }) => {
   await page.getByRole("button", { name: "More", exact: true }).click();
   await page.screenshot({ path: path.join(stateRoot, "more-menu.png") });
   await page.getByRole("button", { name: "More", exact: true }).click();
-  const metrics = await scrollMetrics(page);
-  if (metrics.hasTarget) {
-    await page.locator('[data-visual-scroll-target="true"]').evaluate((element) => {
-      element.scrollTop = 0;
-    });
-  }
-  await page.waitForTimeout(100);
-  await page.screenshot({ path: path.join(stateRoot, "ai-coach-expanded.png") });
-  await page.getByRole("button", { name: "Collapse AI Coach", exact: true }).click();
-  await page.waitForTimeout(100);
-  await page.screenshot({ path: path.join(stateRoot, "ai-coach-collapsed.png") });
-
   await page.close();
 });

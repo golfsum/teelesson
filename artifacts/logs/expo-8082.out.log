@@ -1,0 +1,175 @@
+env: load .env
+env: export EXPO_PUBLIC_FIREBASE_API_KEY EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN EXPO_PUBLIC_FIREBASE_PROJECT_ID EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID EXPO_PUBLIC_FIREBASE_APP_ID EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID EXPO_PUBLIC_DEMO_DATA EXPO_PUBLIC_DEV_MOCK_USER
+Starting project at C:\Users\ND\Documents\GitHub\golfstructurepro
+Starting Metro Bundler
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Waiting on http://localhost:8082
+Logs for your project will appear below.
+Web .\index.ts ▓▓▓▓░░░░░░░░░░░░ 25.4% (149/310)
+Web .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.8% (1270/1271)
+Web Bundled 6498ms index.ts (1275 modules)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 53ms index.ts (1 module)
+Web .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 52ms index.ts (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 54ms index.ts (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 49ms index.ts (1 module)
+ LOG  [web] Logs will appear in the browser console
+Unable to resolve "@/screens/ComingSoonScreen" from "App.tsx"
+[0m [90m 13 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/hooks/useAuth"[39m[33m;[39m
+ [90m 14 |[39m [36mimport[39m [33mRootNavigator[39m [36mfrom[39m [32m"@/navigation/RootNavigator"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 15 |[39m [36mimport[39m [33mComingSoonScreen[39m [36mfrom[39m [32m"@/screens/ComingSoonScreen"[39m[33m;[39m
+ [90m    |[39m                               [31m[1m^[22m[39m
+ [90m 16 |[39m [36mimport[39m [33mErrorBoundary[39m [36mfrom[39m [32m"@/components/ErrorBoundary"[39m[33m;[39m
+ [90m 17 |[39m
+ [90m 18 |[39m [90m/**[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "@/screens/ComingSoonScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "@/screens/coach/CoachDashboardScreen" from "src\navigation\CoachTabs.tsx"
+[0m [90m  6 |[39m [36mimport[39m [33mCoachTabBar[39m [36mfrom[39m [32m"./coach-tab-bar"[39m[33m;[39m
+ [90m  7 |[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m [33mCoachDashboardScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachDashboardScreen"[39m[33m;[39m
+ [90m    |[39m                                   [31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m [33mPlayersListScreen[39m [36mfrom[39m [32m"@/screens/coach/PlayersListScreen"[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m [33mScheduleScreen[39m [36mfrom[39m [32m"@/screens/coach/ScheduleScreen"[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m [33mCoachProfileScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachProfileScreen"[39m[33m;[39m[0m
+
+Import stack:
+
+ src\navigation\CoachTabs.tsx
+ | import "@/screens/coach/CoachDashboardScreen"
+
+ src\navigation\RootNavigator.tsx
+ | import "./CoachTabs"
+
+ App.tsx
+ | import "@/navigation/RootNavigator"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "@/screens/coach/PlayersListScreen" from "src\navigation\CoachTabs.tsx"
+[0m [90m  7 |[39m
+ [90m  8 |[39m [36mimport[39m [33mCoachDashboardScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachDashboardScreen"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  9 |[39m [36mimport[39m [33mPlayersListScreen[39m [36mfrom[39m [32m"@/screens/coach/PlayersListScreen"[39m[33m;[39m
+ [90m    |[39m                                [31m[1m^[22m[39m
+ [90m 10 |[39m [36mimport[39m [33mScheduleScreen[39m [36mfrom[39m [32m"@/screens/coach/ScheduleScreen"[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m [33mCoachProfileScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachProfileScreen"[39m[33m;[39m
+ [90m 12 |[39m [36mimport[39m [33mCoachWorkspaceScreen[39m [36mfrom[39m [32m"@/screens/coach/coach-workspace-screen"[39m[33m;[39m[0m
+
+Import stack:
+
+ src\navigation\CoachTabs.tsx
+ | import "@/screens/coach/PlayersListScreen"
+
+ src\navigation\RootNavigator.tsx
+ | import "./CoachTabs"
+
+ App.tsx
+ | import "@/navigation/RootNavigator"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "@/screens/coach/ScheduleScreen" from "src\navigation\CoachTabs.tsx"
+[0m [90m  8 |[39m [36mimport[39m [33mCoachDashboardScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachDashboardScreen"[39m[33m;[39m
+ [90m  9 |[39m [36mimport[39m [33mPlayersListScreen[39m [36mfrom[39m [32m"@/screens/coach/PlayersListScreen"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 10 |[39m [36mimport[39m [33mScheduleScreen[39m [36mfrom[39m [32m"@/screens/coach/ScheduleScreen"[39m[33m;[39m
+ [90m    |[39m                             [31m[1m^[22m[39m
+ [90m 11 |[39m [36mimport[39m [33mCoachProfileScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachProfileScreen"[39m[33m;[39m
+ [90m 12 |[39m [36mimport[39m [33mCoachWorkspaceScreen[39m [36mfrom[39m [32m"@/screens/coach/coach-workspace-screen"[39m[33m;[39m
+ [90m 13 |[39m[0m
+
+Import stack:
+
+ src\navigation\CoachTabs.tsx
+ | import "@/screens/coach/ScheduleScreen"
+
+ src\navigation\RootNavigator.tsx
+ | import "./CoachTabs"
+
+ App.tsx
+ | import "@/navigation/RootNavigator"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "@/screens/coach/coach-workspace-screen" from "src\navigation\CoachTabs.tsx"
+[0m [90m 10 |[39m [36mimport[39m [33mScheduleScreen[39m [36mfrom[39m [32m"@/screens/coach/ScheduleScreen"[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m [33mCoachProfileScreen[39m [36mfrom[39m [32m"@/screens/coach/CoachProfileScreen"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 12 |[39m [36mimport[39m [33mCoachWorkspaceScreen[39m [36mfrom[39m [32m"@/screens/coach/coach-workspace-screen"[39m[33m;[39m
+ [90m    |[39m                                   [31m[1m^[22m[39m
+ [90m 13 |[39m
+ [90m 14 |[39m [36mconst[39m [33mTab[39m [33m=[39m createBottomTabNavigator[33m<[39m[33mCoachTabsParamList[39m[33m>[39m()[33m;[39m
+ [90m 15 |[39m[0m
+
+Import stack:
+
+ src\navigation\CoachTabs.tsx
+ | import "@/screens/coach/coach-workspace-screen"
+
+ src\navigation\RootNavigator.tsx
+ | import "./CoachTabs"
+
+ App.tsx
+ | import "@/navigation/RootNavigator"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "@/components/GolfLineIcon" from "src\screens\coach\CoachDashboardScreen.tsx"
+[0m [90m 14 |[39m [36mimport[39m { [33mAvatar[39m } [36mfrom[39m [32m"@/components/ui"[39m[33m;[39m
+ [90m 15 |[39m [36mimport[39m { [33mSparkline[39m } [36mfrom[39m [32m"@/components/charts/Charts"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 16 |[39m [36mimport[39m [33mGolfLineIcon[39m[33m,[39m { type [33mGolfIconName[39m } [36mfrom[39m [32m"@/components/GolfLineIcon"[39m[33m;[39m
+ [90m    |[39m                                                  [31m[1m^[22m[39m
+ [90m 17 |[39m [36mimport[39m { [33mUSE_DEMO_DATA[39m } [36mfrom[39m [32m"@/firebase/demoData"[39m[33m;[39m
+ [90m 18 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m"@/hooks/useAuth"[39m[33m;[39m
+ [90m 19 |[39m [36mimport[39m { useLessons } [36mfrom[39m [32m"@/hooks/useLessons"[39m[33m;[39m[0m
+
+Import stack:
+
+ src\screens\coach\CoachDashboardScreen.tsx
+ | import "@/components/GolfLineIcon"
+
+ src\navigation\CoachTabs.tsx
+ | import "@/screens/coach/CoachDashboardScreen"
+
+ src\navigation\RootNavigator.tsx
+ | import "./CoachTabs"
+
+ App.tsx
+ | import "@/navigation/RootNavigator"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
