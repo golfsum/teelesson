@@ -17,33 +17,40 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import BrandMark from "@/components/brand-mark";
+import GolfLineIcon, { type GolfIconName } from "@/components/GolfLineIcon";
 import { colors } from "@/theme";
 
 const CONTACT_EMAIL = "support@teelesson.com";
 
 const features = [
   {
-    icon: "link-outline",
+    icon: "dashboard",
     title: "One beautiful booking page",
     body: "Your own custom link. Students see your photo, bio, lesson types, and real-time availability on any device.",
     note: "teelesson.com/mike-reynolds",
   },
   {
-    icon: "calendar-outline",
+    icon: "schedule",
     title: "Smart booking requests",
     body: "Students request lessons that fit your schedule. Approve, decline, or suggest new times in seconds.",
   },
   {
-    icon: "people-outline",
+    icon: "students",
     title: "Player roster & CRM",
     body: "Keep lesson history, notes, goals, handicaps, and contact info in one clean place.",
   },
   {
-    icon: "trending-up-outline",
+    icon: "analytics",
     title: "Simple dashboard",
     body: "See your week at a glance, track upcoming lessons, and manage student progress between lessons.",
   },
-] as const;
+] as const satisfies Array<{
+  icon: GolfIconName;
+  title: string;
+  body: string;
+  note?: string;
+}>;
 
 const steps = [
   {
@@ -62,6 +69,85 @@ const steps = [
 
 function isEmail(value: string) {
   return /\S+@\S+\.\S+/.test(value.trim());
+}
+
+function UpdatingScreensPreview({ wide }: { wide: boolean }) {
+  const cards = [
+    { icon: "dashboard" as const, title: "Dashboard", value: "42", label: "Active students" },
+    { icon: "video-review" as const, title: "Video Reviews", value: "3", label: "Awaiting review" },
+    { icon: "schedule" as const, title: "Schedule", value: "9", label: "Lessons this week" },
+  ];
+
+  return (
+    <View
+      style={{
+        width: "100%",
+        maxWidth: wide ? 560 : 420,
+        borderRadius: 28,
+        borderWidth: 1,
+        borderColor: "rgba(112, 255, 163, 0.2)",
+        backgroundColor: "#080d10",
+        padding: wide ? 18 : 14,
+        shadowColor: "#000",
+        shadowOpacity: 0.34,
+        shadowRadius: 28,
+        shadowOffset: { width: 0, height: 16 },
+      }}
+    >
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-2">
+          <View className="h-2.5 w-2.5 rounded-full bg-red-400" />
+          <View className="h-2.5 w-2.5 rounded-full bg-yellow-300" />
+          <View className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+        </View>
+        <View className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1">
+          <Text className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300">
+            Screens updating
+          </Text>
+        </View>
+      </View>
+
+      <View className="mt-5 flex-row items-center gap-3">
+        <View className="h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400/15">
+          <GolfLineIcon name="dashboard" size={30} color="#f6fbf8" accent="#70ff9a" muted="#7c918a" strokeWidth={4.8} />
+        </View>
+        <View className="flex-1">
+          <Text className="text-lg font-extrabold text-white">Coach workspace</Text>
+          <Text className="mt-1 text-xs text-zinc-400">Matching the new TeeLesson dashboard style.</Text>
+        </View>
+      </View>
+
+      <View className={wide ? "mt-6 flex-row gap-3" : "mt-6 gap-3"}>
+        {cards.map((card) => (
+          <View
+            key={card.title}
+            className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
+            style={{ flex: 1 }}
+          >
+            <GolfLineIcon name={card.icon} size={28} color="#f6fbf8" accent="#17d879" muted="#70817b" strokeWidth={4.8} />
+            <Text className="mt-4 text-[11px] font-bold text-zinc-300">{card.title}</Text>
+            <Text className="mt-1 text-3xl font-black text-white">{card.value}</Text>
+            <Text className="mt-1 text-[10px] font-semibold text-emerald-300">↑ {card.label}</Text>
+          </View>
+        ))}
+      </View>
+
+      <View className="mt-4 rounded-2xl border border-white/10 bg-white/[0.045] p-4">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-sm font-extrabold text-white">Launch checklist</Text>
+          <Text className="text-xs font-bold text-emerald-300">72%</Text>
+        </View>
+        {["New logo applied", "Dashboard restyle in progress", "Mobile screens being polished"].map((item, index) => (
+          <View key={item} className="mt-3 flex-row items-center gap-3">
+            <View className="h-6 w-6 items-center justify-center rounded-full bg-emerald-400/15">
+              <Ionicons name={index === 2 ? "sync" : "checkmark"} size={14} color="#70ff9a" />
+            </View>
+            <Text className="flex-1 text-xs font-semibold text-zinc-300">{item}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 }
 
 export default function ComingSoonScreen() {
@@ -110,31 +196,24 @@ export default function ComingSoonScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-white"
+      className="flex-1 bg-[#06150f]"
       contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 24) }}
       showsVerticalScrollIndicator={false}
     >
       <View
-        className="border-b border-zinc-200 bg-white"
+        className="border-b border-white/10 bg-[#07120f]"
         style={{ paddingTop: insets.top }}
       >
         <View
           className="mx-auto w-full flex-row items-center justify-between py-5"
           style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}
         >
-          <View className="flex-row items-center gap-3">
-            <View className="h-10 w-10 items-center justify-center rounded-2xl bg-emerald-600">
-              <Ionicons name="golf-outline" size={23} color={colors.white} />
-            </View>
-            <Text className="text-2xl font-extrabold tracking-tight text-zinc-950">
-              TeeLesson
-            </Text>
-          </View>
+          <BrandMark />
 
           {isTablet ? (
             <View className="flex-row items-center gap-8">
-              <Text className="text-sm font-semibold text-zinc-600">Features</Text>
-              <Text className="text-sm font-semibold text-zinc-600">
+              <Text className="text-sm font-semibold text-zinc-300">Features</Text>
+              <Text className="text-sm font-semibold text-zinc-300">
                 How it works
               </Text>
             </View>
@@ -142,96 +221,105 @@ export default function ComingSoonScreen() {
 
           <Pressable
             onPress={scrollToFeatures}
-            className="rounded-2xl bg-emerald-600 px-5 py-3 active:bg-emerald-800"
+            className="rounded-2xl bg-emerald-500 px-5 py-3 active:bg-emerald-700"
           >
-            <Text className="text-sm font-bold text-white">Find out more</Text>
+            <Text className="text-sm font-bold text-[#06150f]">Find out more</Text>
           </Pressable>
         </View>
       </View>
 
-      <View className="border-b border-zinc-100 bg-zinc-50/40">
+      <View className="border-b border-white/10 bg-[#07120f]">
         <View
-          className="mx-auto w-full items-center py-16"
+          className={isWide ? "mx-auto w-full flex-row items-center gap-12 py-16" : "mx-auto w-full items-center gap-10 py-14"}
           style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}
         >
-          <Text
-            className="max-w-4xl text-center font-extrabold tracking-tight text-zinc-950"
-            style={{
-              fontSize: isWide ? 68 : isTablet ? 54 : 40,
-              lineHeight: isWide ? 72 : isTablet ? 60 : 46,
-            }}
-          >
-            Focus on coaching.{"\n"}
-            <Text className="text-emerald-600">
-              We&apos;ll make the rest easier.
-            </Text>
-          </Text>
-
-          <Text
-            className="mt-6 max-w-2xl text-center text-zinc-600"
-            style={{
-              fontSize: isTablet ? 22 : 18,
-              lineHeight: isTablet ? 30 : 26,
-            }}
-          >
-            One beautiful booking page. Smart scheduling and roster tools. So you
-            can spend more time teaching.
-          </Text>
-
-          <View
-            className="mt-10 w-full"
-            style={{ maxWidth: isTablet ? 520 : undefined }}
-          >
-            <View className={isTablet ? "flex-row gap-3" : "gap-3"}>
-              <TextInput
-                value={email}
-                onChangeText={(value) => {
-                  setEmail(value);
-                  setError("");
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder="your@coach.com"
-                placeholderTextColor="#a1a1aa"
-                className="rounded-2xl border border-zinc-300 bg-white px-5 py-4 text-base text-zinc-950"
-                style={{ flex: isTablet ? 1 : undefined }}
-              />
-              <Pressable
-                onPress={() => submitWaitlist("hero-form")}
-                className="items-center justify-center rounded-2xl bg-emerald-600 px-8 py-4 active:bg-emerald-800"
-              >
-                <Text className="text-base font-bold text-white">Find out more</Text>
-              </Pressable>
+          <View className={isWide ? "flex-1" : "w-full items-center"}>
+            <View className="self-start rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2">
+              <Text className="text-xs font-extrabold uppercase tracking-widest text-emerald-300">
+                New TeeLesson experience in progress
+              </Text>
             </View>
-            {error ? (
-              <Text className="mt-3 text-center text-sm font-semibold text-red-600">
-                {error}
+            <Text
+              className={isWide ? "mt-6 max-w-4xl font-extrabold tracking-tight text-white" : "mt-6 max-w-4xl text-center font-extrabold tracking-tight text-white"}
+              style={{
+                fontSize: isWide ? 68 : isTablet ? 54 : 40,
+                lineHeight: isWide ? 72 : isTablet ? 60 : 46,
+              }}
+            >
+              Focus on coaching.{"\n"}
+              <Text className="text-emerald-400">
+                We&apos;ll make the rest easier.
               </Text>
-            ) : (
-              <Text className="mt-3 text-center text-xs text-zinc-500">
-                No spam. Email goes to {CONTACT_EMAIL}.
-              </Text>
-            )}
+            </Text>
 
-            {submitted ? (
-              <View className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-                <View className="flex-row items-center justify-center gap-2">
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={18}
-                    color={colors.fairway[600]}
-                  />
-                  <Text className="font-bold text-emerald-700">
-                    Email draft opened
+            <Text
+              className={isWide ? "mt-6 max-w-2xl text-zinc-300" : "mt-6 max-w-2xl text-center text-zinc-300"}
+              style={{
+                fontSize: isTablet ? 22 : 18,
+                lineHeight: isTablet ? 30 : 26,
+              }}
+            >
+              We&apos;re updating TeeLesson with the new forest green dashboard,
+              stronger icons, and coach-first screens.
+            </Text>
+
+            <View
+              className="mt-10 w-full"
+              style={{ maxWidth: isTablet ? 560 : undefined }}
+            >
+              <View className={isTablet ? "flex-row gap-3" : "gap-3"}>
+                <TextInput
+                  value={email}
+                  onChangeText={(value) => {
+                    setEmail(value);
+                    setError("");
+                  }}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholder="your@coach.com"
+                  placeholderTextColor="#7f918a"
+                  className="rounded-2xl border border-white/15 bg-white/5 px-5 py-4 text-base text-white"
+                  style={{ flex: isTablet ? 1 : undefined, outlineStyle: "none" as any }}
+                />
+                <Pressable
+                  onPress={() => submitWaitlist("hero-form")}
+                  className="items-center justify-center rounded-2xl bg-emerald-500 px-8 py-4 active:bg-emerald-700"
+                >
+                  <Text className="text-base font-bold text-[#06150f]">Find out more</Text>
+                </Pressable>
+              </View>
+              {error ? (
+                <Text className="mt-3 text-center text-sm font-semibold text-red-400">
+                  {error}
+                </Text>
+              ) : (
+                <Text className="mt-3 text-center text-xs text-zinc-400">
+                  No spam. Email goes to {CONTACT_EMAIL}.
+                </Text>
+              )}
+
+              {submitted ? (
+                <View className="mt-4 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 p-4">
+                  <View className="flex-row items-center justify-center gap-2">
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={18}
+                      color={colors.fairway[300]}
+                    />
+                    <Text className="font-bold text-emerald-300">
+                      Email draft opened
+                    </Text>
+                  </View>
+                  <Text className="mt-1 text-center text-xs text-emerald-200">
+                    Send it to request early access.
                   </Text>
                 </View>
-                <Text className="mt-1 text-center text-xs text-emerald-700">
-                  Send it to request early access.
-                </Text>
-              </View>
-            ) : null}
+              ) : null}
+            </View>
           </View>
+
+          <UpdatingScreensPreview wide={isWide} />
         </View>
       </View>
 
@@ -240,18 +328,18 @@ export default function ComingSoonScreen() {
         style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}
       >
         <View className="mx-auto max-w-3xl items-center">
-          <View className="rounded-full bg-emerald-100 px-4 py-1.5">
-            <Text className="text-xs font-extrabold uppercase tracking-widest text-emerald-700">
+          <View className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1.5">
+            <Text className="text-xs font-extrabold uppercase tracking-widest text-emerald-300">
               For Golf Coaches
             </Text>
           </View>
           <Text
-            className="mt-4 text-center font-extrabold tracking-tight text-zinc-950"
+            className="mt-4 text-center font-extrabold tracking-tight text-white"
             style={{ fontSize: isTablet ? 40 : 30, lineHeight: isTablet ? 46 : 36 }}
           >
             Everything you need.{"\n"}Nothing you don&apos;t.
           </Text>
-          <Text className="mt-4 max-w-2xl text-center text-lg leading-7 text-zinc-600">
+          <Text className="mt-4 max-w-2xl text-center text-lg leading-7 text-zinc-300">
             Purpose-built tools that help independent golf instructors spend less
             time on admin and more time on the range.
           </Text>
@@ -264,7 +352,7 @@ export default function ComingSoonScreen() {
           {features.map((feature) => (
             <View
               key={feature.title}
-              className="rounded-3xl border border-zinc-200 bg-white p-7"
+              className="rounded-3xl border border-white/10 bg-white/[0.045] p-7"
               style={{
                 width: isWide ? "23.7%" : isTablet ? "47%" : "100%",
                 minWidth: isWide ? 250 : undefined,
@@ -274,19 +362,22 @@ export default function ComingSoonScreen() {
                 shadowOffset: { width: 0, height: 6 },
               }}
             >
-              <View className="mb-6 h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100">
-                <Ionicons
+              <View className="mb-6 h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/15">
+                <GolfLineIcon
                   name={feature.icon}
-                  size={25}
-                  color={colors.fairway[600]}
+                  size={30}
+                  color="#f6fbf8"
+                  accent="#70ff9a"
+                  muted="#74847f"
+                  strokeWidth={4.8}
                 />
               </View>
-              <Text className="text-xl font-bold tracking-tight text-zinc-950">
+              <Text className="text-xl font-bold tracking-tight text-white">
                 {feature.title}
               </Text>
-              <Text className="mt-3 leading-6 text-zinc-600">{feature.body}</Text>
+              <Text className="mt-3 leading-6 text-zinc-300">{feature.body}</Text>
               {"note" in feature ? (
-                <Text className="mt-5 text-xs font-semibold text-emerald-600">
+                <Text className="mt-5 text-xs font-semibold text-emerald-300">
                   {feature.note}
                 </Text>
               ) : null}
@@ -295,18 +386,18 @@ export default function ComingSoonScreen() {
         </View>
       </View>
 
-      <View className="border-y border-zinc-100 bg-zinc-50 py-16">
+      <View className="border-y border-white/10 bg-[#07120f] py-16">
         <View
           className="mx-auto w-full"
           style={{ maxWidth: 1200, paddingHorizontal: contentPadding }}
         >
           <Text
-            className="text-center font-extrabold tracking-tight text-zinc-950"
+            className="text-center font-extrabold tracking-tight text-white"
             style={{ fontSize: isTablet ? 40 : 30, lineHeight: isTablet ? 46 : 36 }}
           >
             Get started in minutes.{"\n"}Not weeks.
           </Text>
-          <Text className="mx-auto mt-4 max-w-2xl text-center text-lg leading-7 text-zinc-600">
+          <Text className="mx-auto mt-4 max-w-2xl text-center text-lg leading-7 text-zinc-300">
             Three simple steps to a professional booking experience your students
             will love.
           </Text>
@@ -315,16 +406,16 @@ export default function ComingSoonScreen() {
             {steps.map((step, index) => (
               <View
                 key={step.title}
-                className="rounded-3xl border border-zinc-200 bg-white p-8"
+                className="rounded-3xl border border-white/10 bg-white/[0.045] p-8"
                 style={{ flex: 1 }}
               >
-                <View className="-mt-12 mb-4 h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600">
-                  <Text className="text-sm font-extrabold text-white">
+                <View className="-mt-12 mb-4 h-9 w-9 items-center justify-center rounded-2xl bg-emerald-400">
+                  <Text className="text-sm font-extrabold text-[#06150f]">
                     {index + 1}
                   </Text>
                 </View>
-                <Text className="text-xl font-bold text-zinc-950">{step.title}</Text>
-                <Text className="mt-3 leading-6 text-zinc-600">{step.body}</Text>
+                <Text className="text-xl font-bold text-white">{step.title}</Text>
+                <Text className="mt-3 leading-6 text-zinc-300">{step.body}</Text>
               </View>
             ))}
           </View>
@@ -336,37 +427,34 @@ export default function ComingSoonScreen() {
         style={{ maxWidth: 900, paddingHorizontal: contentPadding }}
       >
         <Text
-          className="text-center font-extrabold tracking-tight text-zinc-950"
+          className="text-center font-extrabold tracking-tight text-white"
           style={{ fontSize: isTablet ? 46 : 34, lineHeight: isTablet ? 52 : 40 }}
         >
           Ready to spend more time teaching?
         </Text>
-        <Text className="mt-4 text-center text-xl leading-7 text-zinc-600">
+        <Text className="mt-4 text-center text-xl leading-7 text-zinc-300">
           Be among the first to launch your professional TeeLesson page.
         </Text>
         <Pressable
           onPress={() => openEmail("footer-cta")}
-          className="mt-8 rounded-2xl bg-emerald-600 px-9 py-4 active:bg-emerald-800"
+          className="mt-8 rounded-2xl bg-emerald-500 px-9 py-4 active:bg-emerald-700"
         >
-          <Text className="text-base font-bold text-white">Email TeeLesson</Text>
+          <Text className="text-base font-bold text-[#06150f]">Email TeeLesson</Text>
         </Pressable>
       </View>
 
-      <View className="border-t border-zinc-100 bg-white">
+      <View className="border-t border-white/10 bg-[#07120f]">
         <View
           className={isTablet ? "mx-auto w-full flex-row items-center justify-between gap-6 py-10" : "mx-auto w-full gap-6 py-10"}
           style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}
         >
-          <View className="flex-row items-center gap-2">
-            <Ionicons name="golf-outline" size={22} color={colors.fairway[600]} />
-            <Text className="text-lg font-extrabold text-zinc-950">TeeLesson</Text>
-          </View>
+          <BrandMark compact />
 
           <View className={isTablet ? "flex-row items-center gap-6" : "gap-3"}>
-            <Text className="text-sm text-zinc-500">Privacy</Text>
-            <Text className="text-sm text-zinc-500">Terms</Text>
+            <Text className="text-sm text-zinc-400">Privacy</Text>
+            <Text className="text-sm text-zinc-400">Terms</Text>
             <Text
-              className="text-sm font-semibold text-zinc-600"
+              className="text-sm font-semibold text-zinc-300"
               onPress={() => openEmail("footer-email")}
             >
               {CONTACT_EMAIL}
