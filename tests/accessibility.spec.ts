@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 test("coach dashboard and primary workspaces have no serious accessibility violations", async ({ page }) => {
   await page.goto("/");
   const results: Array<{ route: string; violations: string[] }> = [];
-  for (const route of ["Dashboard", "Students", "Schedule", "Messages", "Payments", "Settings"]) {
+  for (const route of ["Dashboard", "Students", "Schedule", "Lesson Plans", "Video Reviews", "Analytics", "Settings"]) {
     await page.getByRole("button", { name: route, exact: true }).click();
     await page.waitForTimeout(200);
     const scan = await new AxeBuilder({ page }).analyze();

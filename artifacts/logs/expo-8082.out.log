@@ -173,3 +173,10 @@ Import stack:
  
  | import "./index.ts"
 
+iOS .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+iOS .\index.ts ▓▓▓▓░░░░░░░░░░░░ 31.0% (137/340)
+iOS .\index.ts ▓▓▓▓▓▓▓░░░░░░░░░ 48.3% (576/841)
+iOS .\index.ts ▓▓▓▓▓▓▓▓▓▓░░░░░░ 67.4% (1058/1311)
+iOS .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 93.8% (1513/1582)
+iOS .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 98.5% (1669/1682)
+iOS Bundled 19299ms index.ts (1686 modules)

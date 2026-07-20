@@ -96,9 +96,9 @@ function DesktopTabBar({ state, navigation }: BottomTabBarProps) {
           onPress={() => navigation.navigate("Profile")}
           style={{ flexDirection: "row", alignItems: "center", gap: 9, paddingTop: 16 }}
         >
-          <Avatar name={user?.name ?? "Coach Thompson"} uri={user?.photoURL} size={32} />
+          <Avatar name={user?.name ?? "Coach"} uri={user?.photoURL} size={32} />
           <Text numberOfLines={1} style={{ flex: 1, color: "#dfe8e5", fontSize: 11.5, fontWeight: "700" }}>
-            {user?.name ?? "Coach Thompson"}
+            {user?.name ?? "Coach"}
           </Text>
         </Pressable>
       ) : null}

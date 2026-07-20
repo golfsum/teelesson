@@ -23,7 +23,7 @@ export function demoCoach(): AppUser {
     name: "Demo Coach",
     email: "demo@teelesson.app",
     role: "coach",
-    hourlyRate: 75,
+    hourlyRate: 125,
     subscriptionPlan: "Pro",
     publicSlug: "demo-coach",
     location: "Austin, TX",
@@ -147,6 +147,29 @@ export function demoLessons(coachId: string): Lesson[] {
     }
   }
 
+  // A realistic current-month book of paid coaching at the demo coach's
+  // $125 hourly rate. These records keep the dashboard preview representative
+  // without affecting production data or bypassing the normal calculations.
+  Array.from({ length: 38 }, (_, index) => {
+    const day = (index % Math.max(1, now.getDate())) + 1;
+    return {
+      p: (index % PLAYER_SEED.length) + 1,
+      day,
+      duration: index === 30 ? 45 : index === 37 ? 30 : 60,
+      time: ["07:00", "08:30", "10:00", "13:00", "15:30"][index % 5],
+    };
+  }).forEach(({ p, day, duration, time }, index) => {
+    push({
+      playerId: pid(p),
+      date: `${year}-${String(curMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+      startTime: time,
+      duration,
+      type: TYPES[index % TYPES.length],
+      status: "completed",
+      paid: true,
+    });
+  });
+
   // Upcoming confirmed lessons → these players show as "Active".
   push({
     date: isoOffset(0),
@@ -182,7 +205,7 @@ export function demoLessons(coachId: string): Lesson[] {
     title: "Junior Group Clinic",
   });
 
-  Array.from({ length: 19 }, (_, index) => ({
+  Array.from({ length: 6 }, (_, index) => ({
     p: (index % 47) + 6,
     o: (index % 6) + 1,
     time: ["08:00", "09:30", "11:00", "13:00", "14:30", "16:00"][index % 6],

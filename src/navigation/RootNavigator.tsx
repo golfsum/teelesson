@@ -108,7 +108,14 @@ function AuthNavigator() {
       <AuthStack.Screen
         name="Info"
         component={InfoScreen}
-        options={{ headerShown: true, title: "TeeLesson", ...headerOptions }}
+        options={{
+          headerShown: true,
+          title: "TeeLesson",
+          headerStyle: { backgroundColor: "#080b0d" },
+          headerTintColor: "#f6f8f2",
+          headerTitleStyle: { fontWeight: "700" as const },
+          headerShadowVisible: false,
+        }}
       />
     </AuthStack.Navigator>
   );

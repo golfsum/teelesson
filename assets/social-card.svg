@@ -6,9 +6,7 @@
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#field)"/>
-  <circle cx="88" cy="78" r="30" fill="none" stroke="#ffffff" stroke-width="3"/>
-  <path d="M88 96V59M89 59c18 2 23 9 31 17-12-4-20-2-31 2" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="78" cy="94" r="3.5" fill="#42bf69"/>
+  <image href="teelesson-logo.png" x="54" y="44" width="68" height="68" preserveAspectRatio="xMidYMid meet"/>
   <text x="134" y="94" fill="#ffffff" font-family="Arial, sans-serif" font-size="42" font-weight="700">TeeLesson</text>
   <text x="64" y="230" fill="#ffffff" font-family="Arial, sans-serif" font-size="58" font-weight="800">Run your coaching.</text>
   <text x="64" y="300" fill="#ffffff" font-family="Arial, sans-serif" font-size="58" font-weight="800">Grow your impact.</text>
@@ -19,19 +17,19 @@
       <rect width="300" height="86" rx="12" fill="#f8faf9" stroke="#e2e7e5"/>
       <circle cx="42" cy="43" r="24" fill="#daf6e3"/>
       <text x="78" y="34" fill="#56635f" font-family="Arial, sans-serif" font-size="15">Lessons this week</text>
-      <text x="78" y="64" fill="#101917" font-family="Arial, sans-serif" font-size="30" font-weight="700">28</text>
+      <text x="78" y="64" fill="#101917" font-family="Arial, sans-serif" font-size="30" font-weight="700">12</text>
     </g>
     <g transform="translate(386 28)">
       <rect width="300" height="86" rx="12" fill="#f8faf9" stroke="#e2e7e5"/>
       <circle cx="42" cy="43" r="24" fill="#daf6e3"/>
       <text x="78" y="34" fill="#56635f" font-family="Arial, sans-serif" font-size="15">Revenue this month</text>
-      <text x="78" y="64" fill="#101917" font-family="Arial, sans-serif" font-size="30" font-weight="700">$7,650</text>
+      <text x="78" y="64" fill="#101917" font-family="Arial, sans-serif" font-size="30" font-weight="700">$5,250</text>
     </g>
     <g transform="translate(744 28)">
       <rect width="300" height="86" rx="12" fill="#f8faf9" stroke="#e2e7e5"/>
       <circle cx="42" cy="43" r="24" fill="#eaf0ff"/>
       <text x="78" y="34" fill="#56635f" font-family="Arial, sans-serif" font-size="15">Active students</text>
-      <text x="78" y="64" fill="#101917" font-family="Arial, sans-serif" font-size="30" font-weight="700">42</text>
+      <text x="78" y="64" fill="#101917" font-family="Arial, sans-serif" font-size="30" font-weight="700">52</text>
     </g>
   </g>
 </svg>

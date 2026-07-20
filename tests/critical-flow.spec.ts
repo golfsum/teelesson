@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("Dashboard", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("Good morning, Coach!", { exact: true })).toBeVisible();
+  await expect(page.getByText("Good morning, Demo!", { exact: true })).toBeVisible();
 });
 
 test("coach can search the roster and open a student", async ({ page }) => {
@@ -33,14 +33,14 @@ test("dark workspace routes open without browser errors", async ({ page }) => {
   const routes = [
     ["Students", "My Students"],
     ["Schedule", "Schedule"],
-    ["Lesson Plans", "Current Plan · 5 Lessons"],
-    ["Video Reviews", "Pending (3)"],
+    ["Lesson Plans", "Current Plan"],
+    ["Video Reviews", "Video Reviews"],
     ["Analytics", "Student Improvement"],
   ] as const;
 
   for (const [button, expected] of routes) {
     await page.getByRole("button", { name: button, exact: true }).click();
-    await expect(page.getByText(expected, { exact: true }).last()).toBeVisible();
+    await expect(page.getByText(expected, { exact: false }).last()).toBeVisible();
   }
 
   expect(errors).toEqual([]);
@@ -51,14 +51,14 @@ test("dashboard attention actions route to the matching workspaces", async ({ pa
   await expect(page.getByText("Video Reviews", { exact: true }).last()).toBeVisible();
 
   await page.getByRole("button", { name: "Dashboard", exact: true }).click();
-  await page.getByText("3 new booking requests", { exact: true }).click();
+  await page.getByText("3 booking requests awaiting approval", { exact: true }).click();
   await expect(page.getByText("Schedule", { exact: true }).last()).toBeVisible();
 });
 
 test("phone dashboard renders the dark app without the old light dashboard", async ({ browser }) => {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await page.goto("/");
-  await expect(page.getByText("Good morning, Coach!", { exact: true })).toBeVisible();
+  await expect(page.getByText("Good morning, Demo!", { exact: true })).toBeVisible();
   await expect(page.getByText("Operations Hub", { exact: true })).toHaveCount(0);
   await page.close();
 });

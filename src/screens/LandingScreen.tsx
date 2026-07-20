@@ -1,51 +1,62 @@
 /**
  * LandingScreen, Marketing landing page for TeeLesson.
- * Web-first (maxWidth 1100), but renders cleanly on iOS / Android too.
- * AuthStack navigation -> Login | Signup
+ * Restyled to follow the AppsResolve public-site structure while preserving
+ * TeeLesson content, navigation, and CTAs.
  */
 import React from "react";
 import {
-  View,
-  Text,
-  ScrollView,
+  Image,
   Pressable,
+  ScrollView,
+  Text,
+  View,
   useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { Button, Card } from "@/components/ui";
+
 import BrandMark from "@/components/brand-mark";
+import GolfLineIcon, { type GolfIconName } from "@/components/GolfLineIcon";
+import { Button } from "@/components/ui";
 import type { AuthStackParamList, InfoPage } from "@/navigation/types";
 import { colors } from "@/theme";
 
 type NavProp = NativeStackNavigationProp<AuthStackParamList>;
 
-// ---------- data -------------------------------------------------------
+const siteBg = "#080b0d";
+const sectionAlt = "#0d1113";
+const panel = "#101518";
+const line = "#263038";
+const muted = "#9ba8b2";
+const soft = "#cbd4da";
+const lime = "#b7f238";
+const ink = "#101500";
+const white = "#f6f8f2";
 
 const BENEFITS = [
   {
-    icon: "calendar-outline" as const,
+    icon: "schedule" as const,
     title: "Smart Scheduling",
     desc: "Set availability, accept bookings, and eliminate double-ups in seconds.",
   },
   {
-    icon: "people-outline" as const,
+    icon: "students" as const,
     title: "Player CRM",
     desc: "Track every student's history, goals, and progress in one place.",
   },
   {
-    icon: "checkmark-done-outline" as const,
+    icon: "booking" as const,
     title: "Booking Requests",
     desc: "Players request, you approve or decline with one tap, no more phone tag.",
   },
   {
-    icon: "cash-outline" as const,
+    icon: "payments" as const,
     title: "Payment Tracking",
     desc: "Mark lessons paid as you go so you always know who still owes you.",
   },
   {
-    icon: "globe-outline" as const,
+    icon: "follow-up" as const,
     title: "Public Booking Page",
     desc: "A shareable coaching page that lets new students find and book you online.",
   },
@@ -53,51 +64,34 @@ const BENEFITS = [
 
 const FEATURES = [
   {
-    icon: "calendar-outline" as const,
+    icon: "schedule" as const,
     title: "Lesson Booking System",
     desc: "Real-time availability calendar and one-tap approvals keep your schedule full without the back-and-forth.",
   },
   {
-    icon: "people-outline" as const,
+    icon: "students" as const,
     title: "Player Management",
     desc: "Detailed profiles, progress notes, lesson history, and goal tracking for every student on your roster.",
   },
   {
-    icon: "checkmark-done-outline" as const,
+    icon: "booking" as const,
     title: "Approve in One Tap",
     desc: "Every booking request lands in one place, approve or decline instantly and the player is notified.",
   },
   {
-    icon: "cash-outline" as const,
+    icon: "payments" as const,
     title: "Payment Tracking",
     desc: "A simple paid/unpaid toggle per lesson so collecting from students never slips through the cracks.",
   },
   {
-    icon: "person-circle-outline" as const,
+    icon: "follow-up" as const,
     title: "Public Booking Page",
     desc: "A polished page with your bio, credentials, and booking link, your digital first impression and SEO front door.",
   },
   {
-    icon: "phone-portrait-outline" as const,
+    icon: "dashboard" as const,
     title: "Works Everywhere",
     desc: "One responsive web app that runs on phone, tablet, and desktop. Coach from the range or the office.",
-  },
-];
-
-const TESTIMONIALS = [
-  {
-    quote:
-      "TeeLesson completely transformed how I run my coaching business. I used to live in text messages and a paper calendar, chasing students to confirm times and remember who'd paid. Now bookings come in, I approve them in a tap, and I can see at a glance who still owes me.",
-    name: "John M.",
-    title: "PGA Teaching Professional",
-    location: "Phoenix, AZ",
-  },
-  {
-    quote:
-      "As an independent coach I was drowning in admin. This app gave me back my afternoons. Players book through my page, I approve the slots that work, and the roster keeps every student's goals and history in one place.",
-    name: "Sarah K.",
-    title: "Independent Golf Coach",
-    location: "",
   },
 ];
 
@@ -131,69 +125,118 @@ const PRICING = [
   },
 ];
 
-// ---------- small shared atoms -----------------------------------------
-
-function SectionLabel({ text }: { text: string }) {
+function Wrap({ children, style }: { children: React.ReactNode; style?: any }) {
   return (
-    <Text className="text-fairway-600 font-bold text-sm uppercase tracking-widest mb-2 text-center">
-      {text}
-    </Text>
-  );
-}
-
-function SectionHeading({ text, light }: { text: string; light?: boolean }) {
-  return (
-    <Text
-      className={`text-2xl font-extrabold text-center mb-4 ${
-        light ? "text-white" : "text-ink-900"
-      }`}
-    >
-      {text}
-    </Text>
-  );
-}
-
-function SectionSubtext({ text, light }: { text: string; light?: boolean }) {
-  return (
-    <Text
-      className={`text-base text-center max-w-xl self-center mb-10 ${
-        light ? "text-fairway-100" : "text-ink-500"
-      }`}
-    >
-      {text}
-    </Text>
-  );
-}
-
-// ---------- section components -----------------------------------------
-
-function PreviewMetric({ icon, label, value, color }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string; color: string }) {
-  return (
-    <View style={{ flex: 1, minWidth: 130, borderWidth: 1, borderColor: colors.ink[200], borderRadius: 9, padding: 11, flexDirection: "row", alignItems: "center", gap: 9 }}>
-      <View style={{ width: 30, height: 30, borderRadius: 9, backgroundColor: `${color}12`, alignItems: "center", justifyContent: "center" }}><Ionicons name={icon} size={16} color={color} /></View>
-      <View><Text style={{ color: colors.ink[500], fontSize: 8.5 }}>{label}</Text><Text style={{ color: colors.ink[900], fontSize: 18, fontWeight: "800", marginTop: 2 }}>{value}</Text></View>
+    <View style={[{ width: "100%", maxWidth: 1180, alignSelf: "center", paddingHorizontal: 20 }, style]}>
+      {children}
     </View>
   );
 }
 
-function ProductPreview() {
+function AppButton({ label, onPress, ghost = false }: { label: string; onPress: () => void; ghost?: boolean }) {
   return (
-    <View style={{ flex: 1, minWidth: 0, borderRadius: 14, backgroundColor: colors.white, overflow: "hidden", boxShadow: "0 18px 50px rgba(0,0,0,0.28)" }}>
-      <View style={{ padding: 16 }}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}><Text style={{ color: colors.ink[900], fontSize: 18, fontWeight: "800" }}>Dashboard</Text><View style={{ width: 150, height: 28, borderRadius: 6, borderWidth: 1, borderColor: colors.ink[200], flexDirection: "row", alignItems: "center", paddingHorizontal: 8, gap: 5 }}><Ionicons name="search-outline" size={11} color={colors.ink[400]} /><Text style={{ color: colors.ink[400], fontSize: 8 }}>Search students…</Text></View></View>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
-          <PreviewMetric icon="calendar-outline" label="Lessons this week" value="28" color={colors.fairway[600]} />
-          <PreviewMetric icon="cash-outline" label="Revenue this month" value="$7,650" color={colors.fairway[600]} />
-          <PreviewMetric icon="people-outline" label="Active students" value="42" color={colors.blue} />
-        </View>
-        <View style={{ flexDirection: "row", gap: 10 }}>
-          <View style={{ flex: 1, borderRadius: 9, borderWidth: 1, borderColor: colors.ink[200], overflow: "hidden" }}>
-            <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: colors.ink[200] }}><Text style={{ color: colors.ink[900], fontSize: 10, fontWeight: "800" }}>Today’s Schedule</Text></View>
-            {["Ethan Thompson", "Sophia Martinez", "Jackson Lee"].map((name, index) => <View key={name} style={{ padding: 10, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: index === 0 ? colors.fairway[50] : colors.white, borderTopWidth: index ? 1 : 0, borderTopColor: colors.ink[200] }}><Text style={{ width: 38, color: colors.ink[900], fontSize: 8.5, fontWeight: "700" }}>{["10:30", "12:00", "1:30"][index]}</Text><View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: colors.fairway[100], alignItems: "center", justifyContent: "center" }}><Text style={{ color: colors.fairway[700], fontSize: 8, fontWeight: "800" }}>{name.split(" ").map((part) => part[0]).join("")}</Text></View><View style={{ flex: 1 }}><Text style={{ color: colors.ink[900], fontSize: 8.5, fontWeight: "700" }}>{name}</Text><Text style={{ color: colors.ink[500], fontSize: 7.5, marginTop: 2 }}>Lesson (45 min)</Text></View></View>)}
+    <Pressable
+      onPress={onPress}
+      style={{
+        minHeight: 44,
+        borderRadius: 10,
+        paddingHorizontal: 18,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1,
+        borderColor: ghost ? line : lime,
+        backgroundColor: ghost ? panel : lime,
+      }}
+    >
+      <Text style={{ color: ghost ? white : ink, fontSize: 14, fontWeight: "900" }}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <Text style={{ color: lime, fontSize: 12, fontWeight: "900", letterSpacing: 1.8, textTransform: "uppercase" }}>
+      {children}
+    </Text>
+  );
+}
+
+function SectionHead({ eyebrow, title, description, center = false }: { eyebrow: string; title: string; description: string; center?: boolean }) {
+  return (
+    <View style={{ maxWidth: 760, marginBottom: 38, alignSelf: center ? "center" : "auto", alignItems: center ? "center" : "flex-start" }}>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <Text style={{ color: white, fontSize: 38, lineHeight: 42, letterSpacing: -1.2, fontWeight: "900", marginTop: 12, textAlign: center ? "center" : "left" }}>
+        {title}
+      </Text>
+      <Text style={{ color: muted, fontSize: 17, lineHeight: 26, marginTop: 12, textAlign: center ? "center" : "left" }}>
+        {description}
+      </Text>
+    </View>
+  );
+}
+
+function DarkCard({ children, featured = false, style }: { children: React.ReactNode; featured?: boolean; style?: any }) {
+  return (
+    <View
+      style={[
+        {
+          borderWidth: 1,
+          borderColor: featured ? "rgba(183,242,56,0.55)" : line,
+          borderRadius: 16,
+          backgroundColor: panel,
+          padding: 24,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
+}
+
+function IconTile({ name }: { name: GolfIconName }) {
+  return (
+    <View style={{ width: 42, height: 42, borderRadius: 11, backgroundColor: "#0b0f11", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: line }}>
+      <GolfLineIcon name={name} size={27} color={white} accent={lime} muted="#6d7780" strokeWidth={4.8} />
+    </View>
+  );
+}
+
+function DashboardScreenshot({ mobile = false }: { mobile?: boolean }) {
+  return (
+    <View style={{ flex: mobile ? undefined : 1.18, width: mobile ? "100%" : undefined, minWidth: 0, aspectRatio: 16 / 9, borderWidth: 1, borderColor: "rgba(183,242,56,0.32)", borderRadius: mobile ? 14 : 18, backgroundColor: panel, overflow: "hidden", boxShadow: "0 32px 70px rgba(0,0,0,0.38)" }}>
+      <Image
+        source={require("../../assets/coach-dashboard.png")}
+        accessibilityLabel="TeeLesson coach dashboard showing students, lessons, booking requests, revenue, and upcoming work"
+        resizeMode="cover"
+        style={{ width: "100%", height: "100%" }}
+      />
+    </View>
+  );
+}
+
+function Header({ onGetStarted, onSignIn }: { onGetStarted: () => void; onSignIn: () => void }) {
+  const { width } = useWindowDimensions();
+  const desktop = width >= 760;
+  return (
+    <View style={{ borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(8,11,13,0.96)" }}>
+      <Wrap style={{ minHeight: 70, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
+        <BrandMark />
+        {desktop ? (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+            <Text style={{ color: soft, fontSize: 14, fontWeight: "700" }}>Features</Text>
+            <Text style={{ color: soft, fontSize: 14, fontWeight: "700" }}>Pricing</Text>
           </View>
-          <View style={{ width: "34%", borderRadius: 9, borderWidth: 1, borderColor: colors.ink[200], padding: 10 }}><Text style={{ color: colors.ink[900], fontSize: 10, fontWeight: "800", marginBottom: 12 }}>Recent Activity</Text>{["Practice complete", "Video uploaded", "Payment received"].map((item, index) => <View key={item} style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 11 }}><Ionicons name={["golf-outline", "play-outline", "cash-outline"][index] as keyof typeof Ionicons.glyphMap} size={12} color={index === 1 ? colors.blue : colors.fairway[600]} /><Text style={{ color: colors.ink[700], fontSize: 7.5 }}>{item}</Text></View>)}</View>
+        ) : null}
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          {desktop ? (
+            <Pressable onPress={onSignIn} style={{ minHeight: 44, justifyContent: "center", paddingHorizontal: 8 }}>
+              <Text style={{ color: soft, fontSize: 14, fontWeight: "800" }}>Sign in</Text>
+            </Pressable>
+          ) : null}
+          <AppButton label="Start free" onPress={onGetStarted} />
         </View>
-      </View>
+      </Wrap>
     </View>
   );
 }
@@ -202,227 +245,155 @@ function HeroSection({ onGetStarted, onDemo, onSignIn }: { onGetStarted: () => v
   const { width } = useWindowDimensions();
   const desktop = width >= 900;
   return (
-    <View style={{ width: "100%", backgroundColor: "#001b0d", paddingHorizontal: 24, paddingTop: 20, paddingBottom: desktop ? 58 : 44 }}>
-      <View style={{ width: "100%", maxWidth: 1200, alignSelf: "center" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: desktop ? 54 : 42 }}>
-          <BrandMark />
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            {desktop ? <Pressable onPress={onSignIn} style={{ paddingHorizontal: 14, paddingVertical: 9 }}><Text style={{ color: colors.white, fontSize: 12, fontWeight: "700" }}>Sign in</Text></Pressable> : null}
-            <Pressable onPress={onGetStarted} style={{ borderRadius: 7, backgroundColor: colors.fairway[500], paddingHorizontal: 15, paddingVertical: 10 }}><Text style={{ color: colors.navy, fontSize: 12, fontWeight: "900" }}>Start free</Text></Pressable>
-          </View>
-        </View>
-        <View style={{ flexDirection: desktop ? "row" : "column", alignItems: "center", gap: desktop ? 54 : 38 }}>
-          <View style={{ width: desktop ? "37%" : "100%", alignItems: desktop ? "flex-start" : "center" }}>
-            <Text style={{ color: colors.white, fontSize: desktop ? 48 : 38, lineHeight: desktop ? 54 : 44, fontWeight: "800", letterSpacing: -1.7, textAlign: desktop ? "left" : "center" }}>Run your coaching.{"\n"}Grow your impact.</Text>
-            <Text style={{ color: "#c8d8cf", fontSize: desktop ? 16 : 15, lineHeight: 24, marginTop: 22, textAlign: desktop ? "left" : "center", maxWidth: 440 }}>Students, lessons, practice, progress, and payments in one focused workspace built for golf coaches.</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 28, justifyContent: desktop ? "flex-start" : "center" }}>
-              <Button title="Start coaching free" size="lg" onPress={onGetStarted} />
-              <Button title="View a coach profile" size="lg" variant="outline" onPress={onDemo} />
+    <View style={{ paddingTop: 0 }}>
+      <Header onGetStarted={onGetStarted} onSignIn={onSignIn} />
+      <View style={{ paddingVertical: desktop ? 76 : 54, backgroundColor: siteBg }}>
+        <Wrap style={{ flexDirection: desktop ? "row" : "column", gap: desktop ? 58 : 36, alignItems: "center" }}>
+          <View style={{ flex: 1.03 }}>
+            <Eyebrow>Golf coaching operations</Eyebrow>
+            <Text style={{ color: white, fontSize: desktop ? 66 : 43, lineHeight: desktop ? 68 : 46, letterSpacing: desktop ? -3.3 : -1.8, fontWeight: "900", marginTop: 18 }}>
+              Run your coaching.{"\n"}Grow your impact.
+            </Text>
+            <Text style={{ color: soft, fontSize: desktop ? 20 : 17, lineHeight: desktop ? 30 : 26, marginTop: 22, maxWidth: 670 }}>
+              Students, lessons, practice, progress, and payments in one focused workspace built for golf coaches.
+            </Text>
+            <Text style={{ color: white, fontWeight: "800", marginTop: 20 }}>
+              14 days free. No credit card required.
+            </Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 30 }}>
+              <AppButton label="Start coaching free" onPress={onGetStarted} />
+              <AppButton label="View a coach profile" onPress={onDemo} ghost />
             </View>
-            <Text style={{ color: "#8fa79a", fontSize: 10.5, marginTop: 14 }}>14 days free · No credit card required</Text>
           </View>
-          <View style={{ width: desktop ? "63%" : "100%", maxWidth: 720 }}><ProductPreview /></View>
-        </View>
+          <DashboardScreenshot />
+        </Wrap>
       </View>
+    </View>
+  );
+}
+
+function TrustStrip() {
+  const items = [
+    [BENEFITS[0].title, BENEFITS[0].icon],
+    [BENEFITS[1].title, BENEFITS[1].icon],
+    [BENEFITS[2].title, BENEFITS[2].icon],
+    [BENEFITS[3].title, BENEFITS[3].icon],
+  ];
+  return (
+    <View style={{ borderTopWidth: 1, borderBottomWidth: 1, borderColor: line, backgroundColor: sectionAlt }}>
+      <Wrap style={{ flexDirection: "row", flexWrap: "wrap" }}>
+        {items.map(([label, icon], index) => (
+          <View key={label} style={{ width: "25%", minWidth: 240, paddingVertical: 20, paddingHorizontal: 18, flexDirection: "row", alignItems: "center", gap: 10, borderLeftWidth: index ? 1 : 0, borderLeftColor: line }}>
+            <GolfLineIcon name={icon as GolfIconName} size={20} color={white} accent={lime} muted="#6d7780" strokeWidth={5.2} />
+            <Text style={{ color: soft, fontSize: 14, fontWeight: "800" }}>{label}</Text>
+          </View>
+        ))}
+      </Wrap>
     </View>
   );
 }
 
 function ProblemSection() {
   return (
-    <View className="w-full px-6 py-14 items-center bg-ink-50">
-      <SectionLabel text="Why TeeLesson" />
-      <SectionHeading text="Tired of chaotic coaching schedules and lost student progress?" />
-      <SectionSubtext text="You got into golf coaching to teach, not to manage admin. TeeLesson handles the business side so you can focus on the lesson tee." />
-
-      <View className="flex-row flex-wrap gap-4 justify-center w-full">
-        {BENEFITS.map((b) => (
-          <Card key={b.title} className="p-5 items-center w-64 flex-grow-0">
-            <View className="w-12 h-12 rounded-2xl bg-fairway-100 items-center justify-center mb-3">
-              <Ionicons name={b.icon} size={24} color={colors.fairway[600]} />
-            </View>
-            <Text className="text-ink-900 font-bold text-base mb-1 text-center">
-              {b.title}
-            </Text>
-            <Text className="text-ink-500 text-sm text-center leading-relaxed">
-              {b.desc}
-            </Text>
-          </Card>
-        ))}
-      </View>
+    <View style={{ paddingVertical: 88, backgroundColor: sectionAlt, borderBottomWidth: 1, borderBottomColor: line }}>
+      <Wrap>
+        <SectionHead
+          eyebrow="Why TeeLesson"
+          title="Tired of chaotic coaching schedules and lost student progress?"
+          description="You got into golf coaching to teach, not to manage admin. TeeLesson handles the business side so you can focus on the lesson tee."
+        />
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          {BENEFITS.map((benefit) => (
+            <DarkCard key={benefit.title} style={{ flex: 1, minWidth: 210 }}>
+              <IconTile name={benefit.icon} />
+              <Text style={{ color: white, fontSize: 19, fontWeight: "900", marginTop: 14 }}>{benefit.title}</Text>
+              <Text style={{ color: muted, fontSize: 15, lineHeight: 23, marginTop: 8 }}>{benefit.desc}</Text>
+            </DarkCard>
+          ))}
+        </View>
+      </Wrap>
     </View>
   );
 }
 
-function FeaturesSection({ columns }: { columns: number }) {
+function FeaturesSection() {
   return (
-    <View className="w-full px-6 py-14 items-center bg-white">
-      <SectionLabel text="Features" />
-      <SectionHeading text="Built for Golf Coaches" />
-      <SectionSubtext text="Everything you need to run a professional coaching business, nothing you don't." />
-
-      {/* Responsive grid: wrap into rows of `columns` */}
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 16,
-          width: "100%",
-        }}
-      >
-        {FEATURES.map((f) => (
-          <View
-            key={f.title}
-            style={{ width: columns === 3 ? "30%" : "100%", minWidth: 260 }}
-          >
-            <Card className="p-5 h-full">
-              <View className="w-11 h-11 rounded-xl bg-fairway-50 items-center justify-center mb-3">
-                <Ionicons name={f.icon} size={22} color={colors.fairway[600]} />
-              </View>
-              <Text className="text-ink-900 font-bold text-base mb-2">
-                {f.title}
-              </Text>
-              <Text className="text-ink-500 text-sm leading-relaxed">
-                {f.desc}
-              </Text>
-            </Card>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
-}
-
-function TestimonialsSection() {
-  return (
-    <View className="w-full px-6 py-14 items-center bg-fairway-50">
-      <SectionLabel text="Testimonials" />
-      <SectionHeading text="Coaches are loving it" />
-
-      <View className="flex-row flex-wrap gap-5 justify-center w-full">
-        {TESTIMONIALS.map((t) => (
-          <View key={t.name} style={{ flex: 1, minWidth: 280, maxWidth: 500 }}>
-            <Card className="p-6 h-full">
-              {/* Open-quote decoration */}
-              <Text className="text-fairway-300 text-5xl font-extrabold leading-none mb-2">
-                "
-              </Text>
-              <Text className="text-ink-700 text-sm leading-relaxed mb-5 italic">
-                {t.quote}
-              </Text>
-              <View className="flex-row items-center gap-3 mt-auto">
-                <View className="w-10 h-10 rounded-full bg-fairway-600 items-center justify-center">
-                  <Text className="text-white font-bold text-sm">
-                    {t.name.charAt(0)}
-                  </Text>
-                </View>
-                <View>
-                  <Text className="text-ink-900 font-bold text-sm">{t.name}</Text>
-                  <Text className="text-ink-500 text-xs">
-                    {t.title}
-                    {t.location ? ` · ${t.location}` : ""}
-                  </Text>
-                </View>
-              </View>
-            </Card>
-          </View>
-        ))}
-      </View>
+    <View style={{ paddingVertical: 88, backgroundColor: siteBg }}>
+      <Wrap>
+        <SectionHead
+          eyebrow="Features"
+          title="Built for Golf Coaches"
+          description="Everything you need to run a professional coaching business, nothing you don't."
+        />
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          {FEATURES.map((feature) => (
+            <DarkCard key={feature.title} style={{ width: "31.5%", minWidth: 280 }}>
+              <IconTile name={feature.icon} />
+              <Text style={{ color: white, fontSize: 19, fontWeight: "900", marginTop: 14 }}>{feature.title}</Text>
+              <Text style={{ color: muted, fontSize: 15, lineHeight: 23, marginTop: 8 }}>{feature.desc}</Text>
+            </DarkCard>
+          ))}
+        </View>
+      </Wrap>
     </View>
   );
 }
 
 function PricingSection({ onGetStarted }: { onGetStarted: () => void }) {
   return (
-    <View className="w-full px-6 py-14 items-center bg-white">
-      <SectionLabel text="Pricing" />
-      <SectionHeading text="Start Free. Grow with Confidence." />
-      <SectionSubtext text="14-day free trial on every plan. No credit card required." />
-
-      <View className="flex-row flex-wrap gap-5 justify-center w-full">
-        {PRICING.map((p) => (
-          <View key={p.tier} style={{ flex: 1, minWidth: 260, maxWidth: 380 }}>
-            <Card
-              className={`p-7 h-full ${
-                p.featured
-                  ? "border-2 border-fairway-600"
-                  : "border border-ink-200"
-              }`}
-            >
-              {p.featured && (
-                <View className="bg-fairway-600 rounded-full px-3 py-1 self-start mb-3">
-                  <Text className="text-white text-xs font-bold uppercase tracking-wider">
-                    Most Popular
-                  </Text>
+    <View style={{ paddingVertical: 88, backgroundColor: sectionAlt, borderTopWidth: 1, borderBottomWidth: 1, borderColor: line }}>
+      <Wrap>
+        <SectionHead
+          eyebrow="Pricing"
+          title="Start Free. Grow with Confidence."
+          description="14-day free trial on every plan. No credit card required."
+        />
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          {PRICING.map((plan) => (
+            <DarkCard key={plan.tier} featured={plan.featured} style={{ flex: 1, minWidth: 280, minHeight: 410 }}>
+              <View style={{ flex: 1 }}>
+                <View style={{ minHeight: 18 }}>
+                  {plan.featured ? <Text style={{ alignSelf: "flex-end", color: lime, fontSize: 11, fontWeight: "900", letterSpacing: 1.1, textTransform: "uppercase" }}>Most Popular</Text> : null}
                 </View>
-              )}
-              <Text className="text-ink-900 font-extrabold text-xl mb-1">
-                {p.tier}
-              </Text>
-              <View className="flex-row items-end gap-1 mb-5">
-                <Text
-                  className={`font-extrabold text-4xl ${
-                    p.featured ? "text-fairway-600" : "text-ink-900"
-                  }`}
-                >
-                  {p.price}
-                </Text>
-                <Text className="text-ink-500 text-base mb-1">{p.period}</Text>
+                <Text style={{ color: white, fontSize: 20, fontWeight: "900" }}>{plan.tier}</Text>
+                <View style={{ flexDirection: "row", alignItems: "flex-end", marginVertical: 12 }}>
+                  <Text style={{ color: plan.featured ? lime : white, fontSize: 39, fontWeight: "900", letterSpacing: -1.6 }}>{plan.price}</Text>
+                  <Text style={{ color: muted, fontSize: 13, marginBottom: 8 }}> {plan.period}</Text>
+                </View>
+                <View style={{ gap: 9, marginBottom: 22 }}>
+                  {plan.highlights.map((highlight) => (
+                    <View key={highlight} style={{ flexDirection: "row", gap: 9, alignItems: "flex-start" }}>
+                      {!highlight.endsWith(":") ? <Text style={{ color: lime, fontWeight: "900" }}>✓</Text> : null}
+                      <Text style={{ flex: 1, color: highlight.endsWith(":") ? white : muted, fontSize: 15, fontWeight: highlight.endsWith(":") ? "800" : "500" }}>{highlight}</Text>
+                    </View>
+                  ))}
+                </View>
               </View>
-
-              {p.highlights.map((h, i) =>
-                h.endsWith(":") ? (
-                  <Text key={i} className="text-ink-900 text-sm font-bold mb-2 mt-1">
-                    {h}
-                  </Text>
-                ) : (
-                  <View key={i} className="flex-row items-start gap-2 mb-2">
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={18}
-                      color={colors.fairway[600]}
-                      style={{ marginTop: 1 }}
-                    />
-                    <Text className="text-ink-700 text-sm flex-1">{h}</Text>
-                  </View>
-                )
-              )}
-
-              <View className="mt-auto pt-6">
-                <Button
-                  title={p.cta}
-                  variant={p.featured ? "primary" : "outline"}
-                  fullWidth
-                  onPress={onGetStarted}
-                />
-              </View>
-            </Card>
-          </View>
-        ))}
-      </View>
+              <AppButton label={plan.cta} onPress={onGetStarted} ghost={!plan.featured} />
+            </DarkCard>
+          ))}
+        </View>
+      </Wrap>
     </View>
   );
 }
 
 function CtaBand({ onGetStarted }: { onGetStarted: () => void }) {
   return (
-    <View className="bg-fairway-600 w-full px-6 py-14 items-center">
-      <Text className="text-white font-extrabold text-2xl text-center mb-4 max-w-lg">
-        Ready to bring structure to your golf coaching business?
-      </Text>
-      <Text className="text-fairway-100 text-base text-center mb-8 max-w-md">
-        Join hundreds of coaches who've already simplified their admin and
-        elevated their student experience.
-      </Text>
-      <Button
-        title="Start Your Free Trial"
-        variant="primary"
-        size="lg"
-        onPress={onGetStarted}
-        className="bg-white"
-        textClassName="text-fairway-700"
-      />
+    <View style={{ paddingVertical: 72, backgroundColor: siteBg }}>
+      <Wrap>
+        <View style={{ borderWidth: 1, borderColor: line, borderRadius: 20, backgroundColor: panel, padding: 42, flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 30 }}>
+          <View style={{ flex: 1, minWidth: 260 }}>
+            <Text style={{ color: white, fontSize: 38, lineHeight: 42, fontWeight: "900", letterSpacing: -1.4 }}>
+              Ready to bring structure to your golf coaching business?
+            </Text>
+            <Text style={{ color: muted, fontSize: 17, lineHeight: 26, marginTop: 12 }}>
+              Join hundreds of coaches who've already simplified their admin and elevated their student experience.
+            </Text>
+          </View>
+          <AppButton label="Start Your Free Trial" onPress={onGetStarted} />
+        </View>
+      </Wrap>
     </View>
   );
 }
@@ -438,60 +409,228 @@ function FooterSection() {
   const year = new Date().getFullYear();
 
   return (
-    <View className="w-full bg-fairway-700 px-6 py-8 items-center">
-      <View className="flex-row flex-wrap gap-6 justify-center mb-5">
-        {links.map((l) => (
-          <Pressable key={l.page} onPress={() => navigation.navigate("Info", { page: l.page })}>
-            <Text className="text-fairway-200 text-sm font-medium">{l.label}</Text>
-          </Pressable>
-        ))}
-      </View>
-      <Text className="text-fairway-400 text-xs text-center">
-        © {year} TeeLesson. All rights reserved.
-      </Text>
+    <View style={{ borderTopWidth: 1, borderTopColor: line, backgroundColor: "#07090a", paddingVertical: 42 }}>
+      <Wrap>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: 28 }}>
+          <View style={{ maxWidth: 320 }}>
+            <BrandMark />
+          </View>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 24 }}>
+            {links.map((link) => (
+              <Pressable key={link.page} onPress={() => navigation.navigate("Info", { page: link.page })}>
+                <Text style={{ color: soft, fontSize: 14, fontWeight: "700" }}>{link.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+        <View style={{ borderTopWidth: 1, borderTopColor: line, marginTop: 34, paddingTop: 22 }}>
+          <Text style={{ color: muted, fontSize: 12 }}>© {year} TeeLesson. All rights reserved.</Text>
+        </View>
+      </Wrap>
     </View>
   );
 }
 
-// ---------- main component ---------------------------------------------
-
-export default function LandingScreen() {
+function MobileFooterSection() {
   const navigation = useNavigation<NavProp>();
-  const { width } = useWindowDimensions();
+  const links: { label: string; page: InfoPage }[] = [
+    { label: "Features", page: "features" },
+    { label: "For Coaches", page: "forCoaches" },
+    { label: "Privacy", page: "privacy" },
+    { label: "Terms", page: "terms" },
+  ];
+  const year = new Date().getFullYear();
 
-  const featureColumns = width >= 900 ? 3 : 1;
+  return (
+    <View style={{ width: "100%", backgroundColor: colors.fairway[700], paddingHorizontal: 24, paddingVertical: 34, alignItems: "center" }}>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 22, marginBottom: 20 }}>
+        {links.map((link) => (
+          <Pressable key={link.page} onPress={() => navigation.navigate("Info", { page: link.page })}>
+            <Text style={{ color: colors.fairway[100], fontSize: 13, fontWeight: "800" }}>{link.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+      <Text style={{ color: colors.fairway[300], fontSize: 12, textAlign: "center" }}>© {year} TeeLesson. All rights reserved.</Text>
+    </View>
+  );
+}
 
-  const goSignup = () => navigation.navigate("Signup");
-  const goDemo = () => navigation.navigate("PublicCoachProfile", { slug: "demo-coach" });
-  const goSignIn = () => navigation.navigate("Login");
+function MobileSectionLabel({ text }: { text: string }) {
+  return (
+    <Text style={{ color: colors.fairway[600], fontSize: 13, fontWeight: "900", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8, textAlign: "center" }}>
+      {text}
+    </Text>
+  );
+}
 
+function MobileSectionHeading({ text }: { text: string }) {
+  return (
+    <Text style={{ color: colors.ink[900], fontSize: 25, lineHeight: 31, fontWeight: "900", textAlign: "center", marginBottom: 14 }}>
+      {text}
+    </Text>
+  );
+}
+
+function MobileSectionSubtext({ text }: { text: string }) {
+  return (
+    <Text style={{ color: colors.ink[500], fontSize: 15, lineHeight: 23, textAlign: "center", marginBottom: 30 }}>
+      {text}
+    </Text>
+  );
+}
+
+function MobileCard({ children }: { children: React.ReactNode }) {
+  return (
+    <View style={{ width: "100%", borderRadius: 18, borderWidth: 1, borderColor: colors.ink[200], backgroundColor: colors.white, padding: 20 }}>
+      {children}
+    </View>
+  );
+}
+
+function MobileProductPreview() {
+  return <DashboardScreenshot mobile />;
+}
+
+function MobileLanding({
+  onGetStarted,
+  onDemo,
+  onSignIn,
+}: {
+  onGetStarted: () => void;
+  onDemo: () => void;
+  onSignIn: () => void;
+}) {
   return (
     <ScrollView
       className="flex-1 bg-white"
       contentContainerStyle={{ alignItems: "center" }}
       showsVerticalScrollIndicator={false}
     >
-      {/* Each section fills the viewport width; inner content is capped at 1100 */}
+      <View style={{ width: "100%", backgroundColor: "#001b0d", paddingHorizontal: 24, paddingTop: 20, paddingBottom: 44 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 42 }}>
+          <BrandMark />
+          <Pressable onPress={onGetStarted} style={{ borderRadius: 7, backgroundColor: colors.fairway[500], paddingHorizontal: 15, paddingVertical: 10 }}>
+            <Text style={{ color: colors.navy, fontSize: 12, fontWeight: "900" }}>Start free</Text>
+          </Pressable>
+        </View>
+        <View style={{ alignItems: "center", gap: 38 }}>
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <Text style={{ color: colors.white, fontSize: 38, lineHeight: 44, fontWeight: "900", letterSpacing: -1.7, textAlign: "center" }}>Run your coaching.{"\n"}Grow your impact.</Text>
+            <Text style={{ color: "#c8d8cf", fontSize: 15, lineHeight: 24, marginTop: 22, textAlign: "center", maxWidth: 440 }}>Students, lessons, practice, progress, and payments in one focused workspace built for golf coaches.</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 28, justifyContent: "center" }}>
+              <Button title="Start coaching free" size="lg" onPress={onGetStarted} />
+              <Button title="View a coach profile" size="lg" variant="outline" onPress={onDemo} />
+            </View>
+            <Pressable onPress={onSignIn} style={{ marginTop: 14 }}>
+              <Text style={{ color: "#8fa79a", fontSize: 12, fontWeight: "800" }}>Already have an account? Sign in</Text>
+            </Pressable>
+            <Text style={{ color: "#8fa79a", fontSize: 10.5, marginTop: 10 }}>14 days free • No credit card required</Text>
+          </View>
+          <MobileProductPreview />
+        </View>
+      </View>
+
+      <View style={{ width: "100%", paddingHorizontal: 24, paddingVertical: 56, alignItems: "center", backgroundColor: colors.ink[50] }}>
+        <MobileSectionLabel text="Why TeeLesson" />
+        <MobileSectionHeading text="Tired of chaotic coaching schedules and lost student progress?" />
+        <MobileSectionSubtext text="You got into golf coaching to teach, not to manage admin. TeeLesson handles the business side so you can focus on the lesson tee." />
+        <View style={{ width: "100%", gap: 14 }}>
+          {BENEFITS.map((benefit) => (
+            <MobileCard key={benefit.title}>
+              <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: colors.fairway[100], alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
+                <GolfLineIcon name={benefit.icon} size={28} color={colors.ink[900]} accent={colors.fairway[600]} muted={colors.ink[400]} strokeWidth={4.8} />
+              </View>
+              <Text style={{ color: colors.ink[900], fontSize: 16, fontWeight: "900", marginBottom: 6 }}>{benefit.title}</Text>
+              <Text style={{ color: colors.ink[500], fontSize: 14, lineHeight: 21 }}>{benefit.desc}</Text>
+            </MobileCard>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ width: "100%", paddingHorizontal: 24, paddingVertical: 56, alignItems: "center", backgroundColor: colors.white }}>
+        <MobileSectionLabel text="Features" />
+        <MobileSectionHeading text="Built for Golf Coaches" />
+        <MobileSectionSubtext text="Everything you need to run a professional coaching business, nothing you don't." />
+        <View style={{ width: "100%", gap: 14 }}>
+          {FEATURES.map((feature) => (
+            <MobileCard key={feature.title}>
+              <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: colors.fairway[50], alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
+                <GolfLineIcon name={feature.icon} size={26} color={colors.ink[900]} accent={colors.fairway[600]} muted={colors.ink[400]} strokeWidth={4.8} />
+              </View>
+              <Text style={{ color: colors.ink[900], fontSize: 16, fontWeight: "900", marginBottom: 7 }}>{feature.title}</Text>
+              <Text style={{ color: colors.ink[500], fontSize: 14, lineHeight: 21 }}>{feature.desc}</Text>
+            </MobileCard>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ width: "100%", paddingHorizontal: 24, paddingVertical: 56, alignItems: "center", backgroundColor: colors.white }}>
+        <MobileSectionLabel text="Pricing" />
+        <MobileSectionHeading text="Start Free. Grow with Confidence." />
+        <MobileSectionSubtext text="14-day free trial on every plan. No credit card required." />
+        <View style={{ width: "100%", gap: 16 }}>
+          {PRICING.map((plan) => (
+            <MobileCard key={plan.tier}>
+              {plan.featured ? (
+                <View style={{ backgroundColor: colors.fairway[600], borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5, alignSelf: "flex-start", marginBottom: 12 }}>
+                  <Text style={{ color: colors.white, fontSize: 11, fontWeight: "900", letterSpacing: 0.8, textTransform: "uppercase" }}>Most Popular</Text>
+                </View>
+              ) : null}
+              <Text style={{ color: colors.ink[900], fontSize: 20, fontWeight: "900" }}>{plan.tier}</Text>
+              <View style={{ flexDirection: "row", alignItems: "flex-end", marginVertical: 16 }}>
+                <Text style={{ color: plan.featured ? colors.fairway[600] : colors.ink[900], fontSize: 40, fontWeight: "900" }}>{plan.price}</Text>
+                <Text style={{ color: colors.ink[500], fontSize: 16, marginBottom: 7 }}> {plan.period}</Text>
+              </View>
+              {plan.highlights.map((highlight) => (
+                <View key={highlight} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginBottom: 9 }}>
+                  {!highlight.endsWith(":") ? <Ionicons name="checkmark-circle" size={18} color={colors.fairway[600]} style={{ marginTop: 1 }} /> : null}
+                  <Text style={{ flex: 1, color: highlight.endsWith(":") ? colors.ink[900] : colors.ink[700], fontSize: 14, lineHeight: 20, fontWeight: highlight.endsWith(":") ? "900" : "500" }}>{highlight}</Text>
+                </View>
+              ))}
+              <View style={{ marginTop: 14 }}>
+                <Button title={plan.cta} variant={plan.featured ? "primary" : "outline"} fullWidth onPress={onGetStarted} />
+              </View>
+            </MobileCard>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ width: "100%", backgroundColor: colors.fairway[600], paddingHorizontal: 24, paddingVertical: 56, alignItems: "center" }}>
+        <Text style={{ color: colors.white, fontSize: 25, lineHeight: 31, fontWeight: "900", textAlign: "center", marginBottom: 14, maxWidth: 520 }}>Ready to bring structure to your golf coaching business?</Text>
+        <Text style={{ color: colors.fairway[100], fontSize: 15, lineHeight: 23, textAlign: "center", marginBottom: 28, maxWidth: 420 }}>Join hundreds of coaches who've already simplified their admin and elevated their student experience.</Text>
+        <Button title="Start Your Free Trial" variant="primary" size="lg" onPress={onGetStarted} className="bg-white" textClassName="text-fairway-700" />
+      </View>
+
+      <MobileFooterSection />
+    </ScrollView>
+  );
+}
+
+export default function LandingScreen() {
+  const navigation = useNavigation<NavProp>();
+  const { width } = useWindowDimensions();
+
+  const goSignup = () => navigation.navigate("Signup");
+  const goDemo = () => navigation.navigate("PublicCoachProfile", { slug: "demo-coach" });
+  const goSignIn = () => navigation.navigate("Login");
+
+  if (width < 760) {
+    return <MobileLanding onGetStarted={goSignup} onDemo={goDemo} onSignIn={goSignIn} />;
+  }
+
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: siteBg }}
+      contentContainerStyle={{ alignItems: "center" }}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={{ width: "100%", alignSelf: "center" }}>
-
-        {/* 1, HERO */}
         <HeroSection onGetStarted={goSignup} onDemo={goDemo} onSignIn={goSignIn} />
-
-        {/* 2, PROBLEM / BENEFITS */}
+        <TrustStrip />
         <ProblemSection />
-
-        {/* 3, FEATURES */}
-        <FeaturesSection columns={featureColumns} />
-
-        {/* TESTIMONIALS hidden for now */}
-
-        {/* 5, PRICING */}
+        <FeaturesSection />
         <PricingSection onGetStarted={goSignup} />
-
-        {/* 6, CTA BAND */}
         <CtaBand onGetStarted={goSignup} />
-
-        {/* 7, FOOTER */}
         <FooterSection />
       </View>
     </ScrollView>

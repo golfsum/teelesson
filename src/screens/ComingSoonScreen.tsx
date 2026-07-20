@@ -98,18 +98,18 @@ function UpdatingScreensPreview({ wide }: { wide: boolean }) {
         <View className="flex-row items-center gap-2">
           <View className="h-2.5 w-2.5 rounded-full bg-red-400" />
           <View className="h-2.5 w-2.5 rounded-full bg-yellow-300" />
-          <View className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+          <View className="h-2.5 w-2.5 rounded-full bg-[#b7f238]" />
         </View>
-        <View className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1">
-          <Text className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300">
+        <View className="rounded-full border border-[#b7f238]/30 bg-[#b7f238]/10 px-3 py-1">
+          <Text className="text-[10px] font-extrabold uppercase tracking-widest text-[#b7f238]">
             Screens updating
           </Text>
         </View>
       </View>
 
       <View className="mt-5 flex-row items-center gap-3">
-        <View className="h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400/15">
-          <GolfLineIcon name="dashboard" size={30} color="#f6fbf8" accent="#70ff9a" muted="#7c918a" strokeWidth={4.8} />
+        <View className="h-11 w-11 items-center justify-center rounded-2xl bg-[#b7f238]/15">
+          <GolfLineIcon name="dashboard" size={30} color="#f6fbf8" accent="#b7f238" muted="#7c918a" strokeWidth={4.8} />
         </View>
         <View className="flex-1">
           <Text className="text-lg font-extrabold text-white">Coach workspace</Text>
@@ -124,10 +124,10 @@ function UpdatingScreensPreview({ wide }: { wide: boolean }) {
             className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
             style={{ flex: 1 }}
           >
-            <GolfLineIcon name={card.icon} size={28} color="#f6fbf8" accent="#17d879" muted="#70817b" strokeWidth={4.8} />
+            <GolfLineIcon name={card.icon} size={28} color="#f6fbf8" accent="#b7f238" muted="#70817b" strokeWidth={4.8} />
             <Text className="mt-4 text-[11px] font-bold text-zinc-300">{card.title}</Text>
             <Text className="mt-1 text-3xl font-black text-white">{card.value}</Text>
-            <Text className="mt-1 text-[10px] font-semibold text-emerald-300">↑ {card.label}</Text>
+            <Text className="mt-1 text-[10px] font-semibold text-[#b7f238]">↑ {card.label}</Text>
           </View>
         ))}
       </View>
@@ -135,12 +135,12 @@ function UpdatingScreensPreview({ wide }: { wide: boolean }) {
       <View className="mt-4 rounded-2xl border border-white/10 bg-white/[0.045] p-4">
         <View className="flex-row items-center justify-between">
           <Text className="text-sm font-extrabold text-white">Launch checklist</Text>
-          <Text className="text-xs font-bold text-emerald-300">72%</Text>
+          <Text className="text-xs font-bold text-[#b7f238]">72%</Text>
         </View>
         {["New logo applied", "Dashboard restyle in progress", "Mobile screens being polished"].map((item, index) => (
           <View key={item} className="mt-3 flex-row items-center gap-3">
-            <View className="h-6 w-6 items-center justify-center rounded-full bg-emerald-400/15">
-              <Ionicons name={index === 2 ? "sync" : "checkmark"} size={14} color="#70ff9a" />
+            <View className="h-6 w-6 items-center justify-center rounded-full bg-[#b7f238]/15">
+              <Ionicons name={index === 2 ? "sync" : "checkmark"} size={14} color="#b7f238" />
             </View>
             <Text className="flex-1 text-xs font-semibold text-zinc-300">{item}</Text>
           </View>
@@ -196,12 +196,12 @@ export default function ComingSoonScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-[#06150f]"
+      className="flex-1 bg-[#080b0d]"
       contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 24) }}
       showsVerticalScrollIndicator={false}
     >
       <View
-        className="border-b border-white/10 bg-[#07120f]"
+        className="border-b border-white/10 bg-[#0d1113]"
         style={{ paddingTop: insets.top }}
       >
         <View
@@ -221,21 +221,21 @@ export default function ComingSoonScreen() {
 
           <Pressable
             onPress={scrollToFeatures}
-            className="rounded-2xl bg-emerald-500 px-5 py-3 active:bg-emerald-700"
+            className="rounded-2xl bg-[#b7f238] px-5 py-3 active:bg-[#92c928]"
           >
-            <Text className="text-sm font-bold text-[#06150f]">Find out more</Text>
+            <Text className="text-sm font-bold text-[#080b0d]">Find out more</Text>
           </Pressable>
         </View>
       </View>
 
-      <View className="border-b border-white/10 bg-[#07120f]">
+      <View className="border-b border-white/10 bg-[#0d1113]">
         <View
           className={isWide ? "mx-auto w-full flex-row items-center gap-12 py-16" : "mx-auto w-full items-center gap-10 py-14"}
           style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}
         >
           <View className={isWide ? "flex-1" : "w-full items-center"}>
-            <View className="self-start rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2">
-              <Text className="text-xs font-extrabold uppercase tracking-widest text-emerald-300">
+            <View className="self-start rounded-full border border-[#b7f238]/30 bg-[#b7f238]/10 px-4 py-2">
+              <Text className="text-xs font-extrabold uppercase tracking-widest text-[#b7f238]">
                 New TeeLesson experience in progress
               </Text>
             </View>
@@ -247,7 +247,7 @@ export default function ComingSoonScreen() {
               }}
             >
               Focus on coaching.{"\n"}
-              <Text className="text-emerald-400">
+              <Text className="text-[#b7f238]">
                 We&apos;ll make the rest easier.
               </Text>
             </Text>
@@ -284,9 +284,9 @@ export default function ComingSoonScreen() {
                 />
                 <Pressable
                   onPress={() => submitWaitlist("hero-form")}
-                  className="items-center justify-center rounded-2xl bg-emerald-500 px-8 py-4 active:bg-emerald-700"
+                  className="items-center justify-center rounded-2xl bg-[#b7f238] px-8 py-4 active:bg-[#92c928]"
                 >
-                  <Text className="text-base font-bold text-[#06150f]">Find out more</Text>
+                  <Text className="text-base font-bold text-[#080b0d]">Find out more</Text>
                 </Pressable>
               </View>
               {error ? (
@@ -300,18 +300,18 @@ export default function ComingSoonScreen() {
               )}
 
               {submitted ? (
-                <View className="mt-4 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 p-4">
+                <View className="mt-4 rounded-2xl border border-[#b7f238]/25 bg-[#b7f238]/10 p-4">
                   <View className="flex-row items-center justify-center gap-2">
                     <Ionicons
                       name="checkmark-circle"
                       size={18}
                       color={colors.fairway[300]}
                     />
-                    <Text className="font-bold text-emerald-300">
+                    <Text className="font-bold text-[#b7f238]">
                       Email draft opened
                     </Text>
                   </View>
-                  <Text className="mt-1 text-center text-xs text-emerald-200">
+                  <Text className="mt-1 text-center text-xs text-[#d8ff8c]">
                     Send it to request early access.
                   </Text>
                 </View>
@@ -328,8 +328,8 @@ export default function ComingSoonScreen() {
         style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}
       >
         <View className="mx-auto max-w-3xl items-center">
-          <View className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1.5">
-            <Text className="text-xs font-extrabold uppercase tracking-widest text-emerald-300">
+          <View className="rounded-full border border-[#b7f238]/30 bg-[#b7f238]/10 px-4 py-1.5">
+            <Text className="text-xs font-extrabold uppercase tracking-widest text-[#b7f238]">
               For Golf Coaches
             </Text>
           </View>
@@ -362,12 +362,12 @@ export default function ComingSoonScreen() {
                 shadowOffset: { width: 0, height: 6 },
               }}
             >
-              <View className="mb-6 h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/15">
+              <View className="mb-6 h-12 w-12 items-center justify-center rounded-2xl bg-[#b7f238]/15">
                 <GolfLineIcon
                   name={feature.icon}
                   size={30}
                   color="#f6fbf8"
-                  accent="#70ff9a"
+                  accent="#b7f238"
                   muted="#74847f"
                   strokeWidth={4.8}
                 />
@@ -377,7 +377,7 @@ export default function ComingSoonScreen() {
               </Text>
               <Text className="mt-3 leading-6 text-zinc-300">{feature.body}</Text>
               {"note" in feature ? (
-                <Text className="mt-5 text-xs font-semibold text-emerald-300">
+                <Text className="mt-5 text-xs font-semibold text-[#b7f238]">
                   {feature.note}
                 </Text>
               ) : null}
@@ -386,7 +386,7 @@ export default function ComingSoonScreen() {
         </View>
       </View>
 
-      <View className="border-y border-white/10 bg-[#07120f] py-16">
+      <View className="border-y border-white/10 bg-[#0d1113] py-16">
         <View
           className="mx-auto w-full"
           style={{ maxWidth: 1200, paddingHorizontal: contentPadding }}
@@ -409,8 +409,8 @@ export default function ComingSoonScreen() {
                 className="rounded-3xl border border-white/10 bg-white/[0.045] p-8"
                 style={{ flex: 1 }}
               >
-                <View className="-mt-12 mb-4 h-9 w-9 items-center justify-center rounded-2xl bg-emerald-400">
-                  <Text className="text-sm font-extrabold text-[#06150f]">
+                <View className="-mt-12 mb-4 h-9 w-9 items-center justify-center rounded-2xl bg-[#b7f238]">
+                  <Text className="text-sm font-extrabold text-[#080b0d]">
                     {index + 1}
                   </Text>
                 </View>
@@ -437,13 +437,13 @@ export default function ComingSoonScreen() {
         </Text>
         <Pressable
           onPress={() => openEmail("footer-cta")}
-          className="mt-8 rounded-2xl bg-emerald-500 px-9 py-4 active:bg-emerald-700"
+          className="mt-8 rounded-2xl bg-[#b7f238] px-9 py-4 active:bg-[#92c928]"
         >
-          <Text className="text-base font-bold text-[#06150f]">Email TeeLesson</Text>
+          <Text className="text-base font-bold text-[#080b0d]">Email TeeLesson</Text>
         </Pressable>
       </View>
 
-      <View className="border-t border-white/10 bg-[#07120f]">
+      <View className="border-t border-white/10 bg-[#0d1113]">
         <View
           className={isTablet ? "mx-auto w-full flex-row items-center justify-between gap-6 py-10" : "mx-auto w-full gap-6 py-10"}
           style={{ maxWidth: 1480, paddingHorizontal: contentPadding }}

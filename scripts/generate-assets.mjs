@@ -4,14 +4,14 @@ import sharp from "sharp";
 
 const root = process.cwd();
 const assets = path.join(root, "assets");
-const source = await fs.readFile(path.join(assets, "brand-mark.svg"));
+const source = await fs.readFile(path.join(assets, "teelesson-logo.png"));
 
 await sharp(source).resize(1024, 1024).png().toFile(path.join(assets, "icon.png"));
 await sharp(source).resize(1024, 1024).png().toFile(path.join(assets, "adaptive-icon.png"));
 await sharp(source).resize(48, 48).png().toFile(path.join(assets, "favicon.png"));
 await sharp(source).resize(192, 192).png().toFile(path.join(root, "public", "icon-192.png"));
 await sharp(source).resize(512, 512).png().toFile(path.join(root, "public", "icon-512.png"));
-await sharp(await fs.readFile(path.join(assets, "social-card.svg")))
+await sharp(path.join(assets, "social-card.svg"))
   .png()
   .toFile(path.join(root, "public", "social-card.png"));
 

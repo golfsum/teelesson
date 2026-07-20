@@ -14,6 +14,7 @@ import React, {
 import { onAuthStateChanged } from "firebase/auth";
 
 import { auth } from "@/firebase/config";
+import { demoCoach } from "@/firebase/demoData";
 import {
   fetchUserProfile,
   signInWithEmail,
@@ -50,13 +51,7 @@ const DEV_MOCK_USER: AppUser =
         role: "player",
         coachId: "demo-coach",
       }
-    : {
-        id: "dev-user",
-        name: "Demo Coach",
-        email: "demo@teelesson.app",
-        role: "coach",
-        hourlyRate: 75,
-      };
+    : demoCoach();
 
 interface AuthContextValue {
   /** Firestore profile for the signed-in user, or null when signed out. */

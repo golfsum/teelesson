@@ -59,8 +59,10 @@ information order rather than switching to an unrelated legacy dashboard.
 
 ## Assets and provenance
 
-`assets/brand-mark.svg` is the first-party TeeLesson flag-and-ball mark.
+`assets/teelesson-logo.png` is the user-supplied first-party TeeLesson TL mark
+used throughout the product and generated platform assets.
 `assets/mobile-app-preview.png` is a first-party product capture.
 `scripts/generate-assets.mjs` generates the app icon, adaptive icon, splash,
-and favicon. Ionicons come from the installed MIT-licensed Expo package. No
-reference artwork or third-party photography was added.
+favicon, install icons, and social preview. Ionicons come from the installed
+MIT-licensed Expo package. No reference artwork or third-party photography was
+added.

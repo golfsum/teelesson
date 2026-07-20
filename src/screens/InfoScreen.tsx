@@ -150,27 +150,40 @@ export default function InfoScreen() {
   const content = CONTENT[route.params?.page] ?? CONTENT.features;
 
   return (
-    <ScrollView className="flex-1 bg-ink-50" contentContainerStyle={{ paddingBottom: 48 }}>
-      <View className="w-full self-center px-5 pt-6" style={{ maxWidth: 760 }}>
-        <Text className="text-3xl font-extrabold text-ink-900">{content.title}</Text>
-        <Text className="mt-3 text-base leading-relaxed text-ink-500">{content.intro}</Text>
+    <ScrollView
+      className="flex-1 bg-[#080b0d]"
+      contentContainerStyle={{ paddingBottom: 72 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View className="w-full self-center px-5 pt-12" style={{ maxWidth: 820 }}>
+        <View className="rounded-[28px] border border-[#263038] bg-[#101518] p-6 md:p-10">
+          <Text className="text-xs font-black uppercase tracking-[2px] text-[#b7f238]">
+            TeeLesson
+          </Text>
+          <Text className="mt-4 text-4xl font-extrabold tracking-tight text-[#f6f8f2]">
+            {content.title}
+          </Text>
+          <Text className="mt-4 text-base leading-relaxed text-[#cbd4da]">
+            {content.intro}
+          </Text>
 
-        {content.sections.map((s, i) => (
-          <View key={i} className="mt-7">
-            {s.heading ? (
-              <Text className="mb-2 text-lg font-bold text-ink-900">{s.heading}</Text>
-            ) : null}
-            {s.body ? (
-              <Text className="text-base leading-relaxed text-ink-700">{s.body}</Text>
-            ) : null}
-            {s.bullets?.map((b, j) => (
-              <View key={j} className="mt-1.5 flex-row gap-2">
-                <Text className="text-fairway-600">•</Text>
-                <Text className="flex-1 text-base leading-relaxed text-ink-700">{b}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
+          {content.sections.map((s, i) => (
+            <View key={i} className="mt-7 border-t border-[#263038] pt-7">
+              {s.heading ? (
+                <Text className="mb-2 text-lg font-bold text-[#f6f8f2]">{s.heading}</Text>
+              ) : null}
+              {s.body ? (
+                <Text className="text-base leading-relaxed text-[#cbd4da]">{s.body}</Text>
+              ) : null}
+              {s.bullets?.map((b, j) => (
+                <View key={j} className="mt-2 flex-row gap-3">
+                  <Text className="text-[#b7f238]">•</Text>
+                  <Text className="flex-1 text-base leading-relaxed text-[#cbd4da]">{b}</Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
       </View>
     </ScrollView>
   );

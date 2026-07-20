@@ -11,17 +11,17 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Avatar } from "@/components/ui";
 import { Sparkline } from "@/components/charts/Charts";
 import GolfLineIcon, { type GolfIconName } from "@/components/GolfLineIcon";
-import { USE_DEMO_DATA } from "@/firebase/demoData";
+import { Avatar } from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
+import { useAvailability } from "@/hooks/useAvailability";
 import { useLessons } from "@/hooks/useLessons";
 import { usePlayers } from "@/hooks/usePlayers";
 import { colors } from "@/theme";
-import { currency, formatTime, todayISO } from "@/utils/format";
-import { lessonParticipantLabel } from "@/utils/lessons";
-import type { Lesson, Player } from "@/types";
+import { currency, formatDate, formatTime, todayISO } from "@/utils/format";
+import { lessonParticipantIds, lessonParticipantLabel } from "@/utils/lessons";
+import type { AvailabilitySlot, Lesson, LessonType, Player } from "@/types";
 
 const bg = "#082417";
 const appBg = "#080d10";
@@ -36,10 +36,21 @@ const red = "#ff4d57";
 
 type Facts = {
   activeStudents: number;
+  newStudentsThisMonth: number;
   lessonsThisWeek: number;
+  previousWeekLessons: number;
   bookingRequests: number;
+  newBookingRequestsToday: number;
   revenue: number;
+  previousMonthRevenue: number;
   unpaidCount: number;
+  outstandingAmount: number;
+  videoReviewCount: number;
+  followUpCount: number;
+  availabilityCount: number;
+  lessonTypeBreakdown: Array<{ label: string; percent: number }>;
+  revenueBars: number[];
+  studentProgress: number[];
 };
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -62,13 +73,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function DarkCard({
-  children,
-  style,
-}: {
-  children: React.ReactNode;
-  style?: any;
-}) {
+function DarkCard({ children, style }: { children: React.ReactNode; style?: any }) {
   return (
     <View
       style={[
@@ -88,7 +93,19 @@ function DarkCard({
   );
 }
 
-function TopBar({ search, setSearch }: { search: string; setSearch: (value: string) => void }) {
+function TopBar({
+  search,
+  setSearch,
+  notificationCount,
+  onNotifications,
+  onSearchSubmit,
+}: {
+  search: string;
+  setSearch: (value: string) => void;
+  notificationCount: number;
+  onNotifications: () => void;
+  onSearchSubmit: () => void;
+}) {
   const { user } = useAuth();
   return (
     <View
@@ -121,6 +138,7 @@ function TopBar({ search, setSearch }: { search: string; setSearch: (value: stri
         <TextInput
           value={search}
           onChangeText={setSearch}
+          onSubmitEditing={onSearchSubmit}
           placeholder="Search students, lessons or plans..."
           placeholderTextColor="#70807a"
           style={{ flex: 1, color: text, fontSize: 12, outlineStyle: "none" as any }}
@@ -130,6 +148,7 @@ function TopBar({ search, setSearch }: { search: string; setSearch: (value: stri
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Open notifications"
+        onPress={onNotifications}
         style={{
           width: 34,
           height: 34,
@@ -139,25 +158,27 @@ function TopBar({ search, setSearch }: { search: string; setSearch: (value: stri
         }}
       >
         <GolfLineIcon name="notifications" size={23} color="#e8f0ed" accent={green} muted="#74847f" strokeWidth={5.4} simple />
-        <View
-          style={{
-            position: "absolute",
-            right: 2,
-            top: 1,
-            minWidth: 15,
-            height: 15,
-            borderRadius: 8,
-            backgroundColor: red,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: text, fontSize: 8, fontWeight: "900" }}>3</Text>
-        </View>
+        {notificationCount > 0 ? (
+          <View
+            style={{
+              position: "absolute",
+              right: 2,
+              top: 1,
+              minWidth: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: red,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: text, fontSize: 8, fontWeight: "900" }}>{Math.min(notificationCount, 9)}</Text>
+          </View>
+        ) : null}
       </Pressable>
-      <Avatar name={user?.name ?? "Coach Thompson"} uri={user?.photoURL} size={32} />
+      <Avatar name={user?.name ?? "Coach"} uri={user?.photoURL} size={32} />
       <Text numberOfLines={1} style={{ color: "#b8c6c1", fontSize: 12 }}>
-        {user?.name ?? "Coach Thompson"}
+        {user?.name ?? "Coach"}
       </Text>
       <Ionicons name="chevron-down" size={14} color={muted} />
     </View>
@@ -199,35 +220,53 @@ function Metric({
       <Text style={{ color: text, fontSize: 27, fontWeight: "900", marginTop: 7, letterSpacing: -0.5 }}>
         {value}
       </Text>
-      <Text style={{ color, fontSize: 11, marginTop: 2, fontWeight: "700" }}>↑ {trend}</Text>
+      <Text style={{ color, fontSize: 11, marginTop: 2, fontWeight: "700" }}>{trend}</Text>
     </DarkCard>
   );
 }
 
-function SectionHead({ title, action }: { title: string; action?: string }) {
+function SectionHead({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
       <Text style={{ color: text, fontSize: 14, fontWeight: "900" }}>{title}</Text>
-      {action ? <Text style={{ color: "#d5e1dd", fontSize: 11 }}>{action}</Text> : null}
+      {action ? (
+        <Pressable onPress={onAction} disabled={!onAction}>
+          <Text style={{ color: "#d5e1dd", fontSize: 11 }}>{action}</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
+}
+
+function lessonTypeLabel(type: LessonType) {
+  const labels: Record<LessonType, string> = {
+    range: "Range Lesson",
+    simulator: "Simulator",
+    online: "Online Lesson",
+    indoor: "Indoor Lesson",
+    group: "Group Clinic",
+    review: "Video Review",
+  };
+  return labels[type] ?? "Lesson";
 }
 
 function UpcomingLessons({
   lessons,
   playerMap,
   onPrepare,
+  onViewAll,
 }: {
   lessons: Lesson[];
   playerMap: Record<string, string>;
   onPrepare: (lesson: Lesson) => void;
+  onViewAll: () => void;
 }) {
   const rows = lessons.slice(0, 3);
   return (
     <DarkCard style={{ flex: 1.2, padding: 16, minHeight: 234 }}>
-      <SectionHead title="Upcoming Lessons" action="View All" />
+      <SectionHead title="Upcoming Lessons" action="View All" onAction={onViewAll} />
       <View style={{ gap: 10 }}>
-        {rows.map((lesson, index) => {
+        {rows.length ? rows.map((lesson, index) => {
           const name = lessonParticipantLabel(lesson, playerMap);
           return (
             <View
@@ -248,14 +287,14 @@ function UpcomingLessons({
                   {name}
                 </Text>
                 <Text numberOfLines={1} style={{ color: muted, fontSize: 10, marginTop: 3 }}>
-                  {index === 2 ? "Tomorrow" : "Today"} • {formatTime(lesson.startTime)}
+                  {formatDate(lesson.date)} • {formatTime(lesson.startTime)}
                 </Text>
               </View>
-              <View style={{ width: 90 }}>
+              <View style={{ width: 100 }}>
                 <Text numberOfLines={1} style={{ color: "#d9e4e0", fontSize: 10 }}>
-                  {lesson.title ?? (lesson.type === "group" ? "Short Game" : "Full Swing")}
+                  {lesson.title ?? lessonTypeLabel(lesson.type)}
                 </Text>
-                <Text style={{ color: muted, fontSize: 10, marginTop: 2 }}>Lesson {index + 2}/5</Text>
+                <Text style={{ color: muted, fontSize: 10, marginTop: 2 }}>{lesson.duration} min • {lesson.status}</Text>
               </View>
               <Pressable
                 onPress={() => onPrepare(lesson)}
@@ -265,7 +304,9 @@ function UpcomingLessons({
               </Pressable>
             </View>
           );
-        })}
+        }) : (
+          <Text style={{ color: muted, fontSize: 12 }}>No upcoming lessons scheduled.</Text>
+        )}
       </View>
     </DarkCard>
   );
@@ -273,14 +314,16 @@ function UpcomingLessons({
 
 function NeedsAttention({ facts, onNavigate }: { facts: Facts; onNavigate: (route: string) => void }) {
   const rows = [
-    { icon: "video-review" as const, color: red, label: "3 videos awaiting review", route: "Videos" },
-    { icon: "booking" as const, color: orange, label: `${facts.bookingRequests} new booking requests`, route: "Schedule" },
-    { icon: "students" as const, color: orange, label: "4 students need follow-up", route: "Players" },
-  ];
+    facts.videoReviewCount > 0 ? { icon: "video-review" as const, color: red, label: `${facts.videoReviewCount} video ${facts.videoReviewCount === 1 ? "review" : "reviews"} awaiting review`, route: "Videos" } : null,
+    facts.bookingRequests > 0 ? { icon: "booking" as const, color: orange, label: `${facts.bookingRequests} booking ${facts.bookingRequests === 1 ? "request" : "requests"} awaiting approval`, route: "Schedule" } : null,
+    facts.outstandingAmount > 0 ? { icon: "revenue" as const, color: orange, label: `${currency(facts.outstandingAmount)} outstanding`, route: "Payments" } : null,
+    facts.followUpCount > 0 ? { icon: "students" as const, color: orange, label: `${facts.followUpCount} students need follow-up`, route: "Players" } : null,
+  ].filter(Boolean) as Array<{ icon: GolfIconName; color: string; label: string; route: string }>;
+
   return (
     <DarkCard style={{ padding: 16, minHeight: 128 }}>
-      <SectionHead title="Needs Your Attention" action="3" />
-      {rows.map((row, index) => (
+      <SectionHead title="Needs Your Attention" action={String(rows.length)} />
+      {rows.length ? rows.map((row, index) => (
         <Pressable
           key={row.label}
           onPress={() => onNavigate(row.route)}
@@ -299,43 +342,148 @@ function NeedsAttention({ facts, onNavigate }: { facts: Facts; onNavigate: (rout
           <Text style={{ flex: 1, color: "#d8e3df", fontSize: 12 }}>{row.label}</Text>
           <Ionicons name="chevron-forward" size={14} color={muted} />
         </Pressable>
-      ))}
+      )) : (
+        <Text style={{ color: muted, fontSize: 12 }}>No urgent actions right now.</Text>
+      )}
     </DarkCard>
   );
 }
 
-function RecentActivity() {
+function RecentActivity({ items }: { items: Array<{ id: string; label: string; detail: string; time: string }> }) {
   return (
     <DarkCard style={{ padding: 16, minHeight: 92 }}>
       <SectionHead title="Recent Activity" />
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
-        <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: green, alignItems: "center", justifyContent: "center" }}>
-          <Ionicons name="checkmark" size={15} color={text} />
-        </View>
-        <Text style={{ flex: 1, color: "#d8e3df", fontSize: 12 }}>Jordan Kim booked a follow-up lesson</Text>
-        <Text style={{ color: muted, fontSize: 10 }}>2h ago</Text>
+      <View style={{ gap: 10 }}>
+        {items.length ? items.map((item) => (
+          <View key={item.id} style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
+            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: green, alignItems: "center", justifyContent: "center" }}>
+              <Ionicons name="checkmark" size={15} color={text} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: "#d8e3df", fontSize: 12 }}>{item.label}</Text>
+              <Text style={{ color: muted, fontSize: 10, marginTop: 2 }}>{item.detail}</Text>
+            </View>
+            <Text style={{ color: muted, fontSize: 10 }}>{item.time}</Text>
+          </View>
+        )) : (
+          <Text style={{ color: muted, fontSize: 12 }}>Activity will appear as lessons and bookings change.</Text>
+        )}
       </View>
     </DarkCard>
   );
 }
 
-function buildFacts(lessons: Lesson[], upcoming: Lesson[], players: Player[], hourlyRate: number): Facts {
+function addDays(iso: string, days: number) {
+  const date = new Date(`${iso}T12:00:00`);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function monthKey(offset = 0) {
+  const date = new Date();
+  date.setMonth(date.getMonth() + offset);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function trend(current: number, previous: number, suffix: string) {
+  if (previous <= 0 && current > 0) return `↑ ${current} ${suffix}`;
+  if (previous <= 0) return `0 ${suffix}`;
+  const delta = Math.round((current - previous) / previous * 100);
+  if (delta > 0) return `↑ ${delta}% ${suffix}`;
+  if (delta < 0) return `↓ ${Math.abs(delta)}% ${suffix}`;
+  return `No change ${suffix}`;
+}
+
+function estimateLessonRevenue(lesson: Lesson, hourlyRate: number) {
+  return lesson.duration / 60 * hourlyRate;
+}
+
+function buildFacts(lessons: Lesson[], upcoming: Lesson[], players: Player[], slots: AvailabilitySlot[], hourlyRate: number): Facts {
   const today = todayISO();
-  const weekEnd = new Date(new Date(today + "T12:00:00").getTime() + 7 * 86_400_000).toISOString().slice(0, 10);
+  const weekEnd = addDays(today, 7);
+  const previousWeekStart = addDays(today, -7);
+  const month = monthKey();
+  const previousMonth = monthKey(-1);
   const lessonsThisWeek = upcoming.filter((lesson) => lesson.date >= today && lesson.date < weekEnd).length;
-  const activeIds = new Set(upcoming.flatMap((lesson) => lesson.playerIds?.length ? lesson.playerIds : lesson.playerId ? [lesson.playerId] : []));
-  const unpaid = lessons.filter((lesson) => !lesson.paid && lesson.status !== "cancelled").length;
-  const month = today.slice(0, 7);
+  const previousWeekLessons = lessons.filter((lesson) => lesson.date >= previousWeekStart && lesson.date < today && lesson.status !== "cancelled").length;
+  const upcomingPlayerIds = new Set(upcoming.flatMap(lessonParticipantIds));
+  const unpaidLessons = lessons.filter((lesson) => !lesson.paid && lesson.status !== "cancelled" && lesson.status !== "requested");
   const revenue = lessons
-    .filter((lesson) => lesson.paid && lesson.date.startsWith(month))
-    .reduce((sum, lesson) => sum + lesson.duration / 60 * hourlyRate, 0);
+    .filter((lesson) => lesson.paid && lesson.date.startsWith(month) && lesson.status !== "cancelled")
+    .reduce((sum, lesson) => sum + estimateLessonRevenue(lesson, hourlyRate), 0);
+  const previousMonthRevenue = lessons
+    .filter((lesson) => lesson.paid && lesson.date.startsWith(previousMonth) && lesson.status !== "cancelled")
+    .reduce((sum, lesson) => sum + estimateLessonRevenue(lesson, hourlyRate), 0);
+  const typeCounts = lessons
+    .filter((lesson) => lesson.status !== "cancelled")
+    .reduce<Record<string, number>>((acc, lesson) => {
+      const label = lessonTypeLabel(lesson.type);
+      acc[label] = (acc[label] ?? 0) + 1;
+      return acc;
+    }, {});
+  const totalTypes = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
+  const lessonTypeBreakdown = Object.entries(typeCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([label, count]) => ({ label, percent: totalTypes ? Math.round(count / totalTypes * 100) : 0 }));
+  const revenueBars = Array.from({ length: 8 }, (_, index) => {
+    const start = addDays(today, -(7 - index) * 4);
+    const end = addDays(start, 4);
+    return lessons
+      .filter((lesson) => lesson.paid && lesson.date >= start && lesson.date < end && lesson.status !== "cancelled")
+      .reduce((sum, lesson) => sum + estimateLessonRevenue(lesson, hourlyRate), 0);
+  });
+
   return {
-    activeStudents: USE_DEMO_DATA ? 42 : activeIds.size,
-    lessonsThisWeek: USE_DEMO_DATA ? 9 : lessonsThisWeek,
-    bookingRequests: USE_DEMO_DATA ? 3 : lessons.filter((lesson) => lesson.status === "requested").length,
-    revenue: USE_DEMO_DATA ? 5240 : revenue,
-    unpaidCount: unpaid,
+    activeStudents: players.length,
+    newStudentsThisMonth: players.filter((player) => player.createdAt && new Date(player.createdAt).toISOString().startsWith(month)).length,
+    lessonsThisWeek,
+    previousWeekLessons,
+    bookingRequests: lessons.filter((lesson) => lesson.status === "requested").length,
+    newBookingRequestsToday: lessons.filter((lesson) => lesson.status === "requested" && lesson.createdAt && new Date(lesson.createdAt).toISOString().slice(0, 10) === today).length,
+    revenue,
+    previousMonthRevenue,
+    unpaidCount: unpaidLessons.length,
+    outstandingAmount: unpaidLessons.reduce((sum, lesson) => sum + estimateLessonRevenue(lesson, hourlyRate), 0),
+    videoReviewCount: lessons.filter((lesson) => ["review", "online"].includes(lesson.type) && lesson.status !== "completed" && lesson.status !== "cancelled").length,
+    followUpCount: players.filter((player) => !upcomingPlayerIds.has(player.id)).length,
+    availabilityCount: slots.length,
+    lessonTypeBreakdown,
+    revenueBars,
+    studentProgress: players.slice(0, 10).map((player, index) => Number((player.handicap ?? 18) + index * 0.4)).reverse(),
   };
+}
+
+function buildRecentActivity(lessons: Lesson[], playerMap: Record<string, string>) {
+  return [...lessons]
+    .sort((a, b) => (b.updatedAt ?? b.createdAt ?? 0) - (a.updatedAt ?? a.createdAt ?? 0))
+    .slice(0, 3)
+    .map((lesson) => {
+      const name = lessonParticipantLabel(lesson, playerMap);
+      const action =
+        lesson.status === "requested"
+          ? "requested a lesson"
+          : lesson.status === "completed"
+            ? "completed a lesson"
+            : lesson.status === "cancelled"
+              ? "cancelled a lesson"
+              : "has an upcoming lesson";
+      return {
+        id: lesson.id,
+        label: `${name} ${action}`,
+        detail: `${lessonTypeLabel(lesson.type)} • ${formatDate(lesson.date)} at ${formatTime(lesson.startTime)}`,
+        time: lesson.updatedAt || lesson.createdAt ? "recent" : formatDate(lesson.date),
+      };
+    });
+}
+
+function currentDateLabel() {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export default function CoachDashboardScreen() {
@@ -345,11 +493,17 @@ export default function CoachDashboardScreen() {
   const coachId = user?.id ?? "";
   const { players, loading: playersLoading } = usePlayers(coachId);
   const { lessons, upcoming, loading: lessonsLoading } = useLessons({ coachId });
+  const { slots, loading: availabilityLoading } = useAvailability(coachId);
   const [search, setSearch] = useState("");
-  const loading = playersLoading || lessonsLoading;
-  const facts = useMemo(() => buildFacts(lessons, upcoming, players, user?.hourlyRate ?? 0), [lessons, upcoming, players, user?.hourlyRate]);
+  const loading = playersLoading || lessonsLoading || availabilityLoading;
+  const hourlyRate = user?.hourlyRate ?? 0;
+  const facts = useMemo(() => buildFacts(lessons, upcoming, players, slots, hourlyRate), [lessons, upcoming, players, slots, hourlyRate]);
   const playerMap = useMemo(() => Object.fromEntries(players.map((player) => [player.id, player.name])), [players]);
+  const recentActivity = useMemo(() => buildRecentActivity(lessons, playerMap), [lessons, playerMap]);
   const columns = width >= 1120;
+  const maxRevenue = Math.max(...facts.revenueBars, 1);
+  const progressValues = facts.studentProgress.length ? facts.studentProgress : [0, 0, 0, 0];
+  const progressChange = progressValues.length > 1 ? Math.round((progressValues[progressValues.length - 1] - progressValues[0]) * 10) / 10 : 0;
 
   const openLesson = (lesson: Lesson) => {
     if (lesson.playerId) {
@@ -361,7 +515,13 @@ export default function CoachDashboardScreen() {
 
   return (
     <Shell>
-      <TopBar search={search} setSearch={setSearch} />
+      <TopBar
+        search={search}
+        setSearch={setSearch}
+        notificationCount={facts.bookingRequests + facts.videoReviewCount + facts.unpaidCount}
+        onNotifications={() => navigation.navigate("Messages")}
+        onSearchSubmit={() => navigation.navigate("Players")}
+      />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: width >= 1024 ? 22 : 16, paddingBottom: 34 }}
@@ -370,13 +530,13 @@ export default function CoachDashboardScreen() {
         <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 22 }}>
           <View>
             <Text style={{ color: text, fontSize: width >= 900 ? 27 : 23, fontWeight: "900", letterSpacing: -0.6 }}>
-              Good morning, Coach!
+              Good morning, {user?.name?.split(" ")[0] ?? "Coach"}!
             </Text>
             <Text style={{ color: "#bcc9c4", fontSize: 14, marginTop: 7 }}>
               Focus on coaching. We'll make the rest easier.
             </Text>
           </View>
-          <Text style={{ color: "#b9c6c1", fontSize: 12, marginTop: 4 }}>Mon, Jul 13, 2026</Text>
+          <Text style={{ color: "#b9c6c1", fontSize: 12, marginTop: 4 }}>{currentDateLabel()}</Text>
         </View>
 
         {loading ? (
@@ -384,17 +544,17 @@ export default function CoachDashboardScreen() {
         ) : (
           <View style={{ gap: 16 }}>
             <View style={{ flexDirection: columns ? "row" : "column", gap: 14 }}>
-              <Metric icon="students" label="Active Students" value={String(facts.activeStudents)} trend="14% vs last month" style={{ flex: 1 }} />
-              <Metric icon="calendar-club" label="Lessons This Week" value={String(facts.lessonsThisWeek)} trend="2 vs last week" style={{ flex: 1 }} />
-              <Metric icon="booking" label="Booking Requests" value={String(facts.bookingRequests)} trend="2 new today" style={{ flex: 1 }} />
-              <Metric icon="revenue" label="Revenue This Month" value={currency(facts.revenue)} trend="22% vs last month" style={{ flex: 1 }} />
+              <Metric icon="students" label="Active Students" value={String(facts.activeStudents)} trend={`↑ ${facts.newStudentsThisMonth} new this month`} style={{ flex: 1 }} />
+              <Metric icon="calendar-club" label="Lessons This Week" value={String(facts.lessonsThisWeek)} trend={trend(facts.lessonsThisWeek, facts.previousWeekLessons, "vs last week")} style={{ flex: 1 }} />
+              <Metric icon="booking" label="Booking Requests" value={String(facts.bookingRequests)} trend={`↑ ${facts.newBookingRequestsToday} new today`} style={{ flex: 1 }} />
+              <Metric icon="revenue" label="Revenue This Month" value={currency(facts.revenue)} trend={trend(facts.revenue, facts.previousMonthRevenue, "vs last month")} style={{ flex: 1 }} />
             </View>
 
             <View style={{ flexDirection: columns ? "row" : "column", gap: 16 }}>
-              <UpcomingLessons lessons={upcoming} playerMap={playerMap} onPrepare={openLesson} />
+              <UpcomingLessons lessons={upcoming} playerMap={playerMap} onPrepare={openLesson} onViewAll={() => navigation.navigate("Schedule")} />
               <View style={{ flex: 1, gap: 16 }}>
                 <NeedsAttention facts={facts} onNavigate={(route) => navigation.navigate(route)} />
-                <RecentActivity />
+                <RecentActivity items={recentActivity} />
               </View>
             </View>
 
@@ -405,16 +565,18 @@ export default function CoachDashboardScreen() {
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                     <View>
                       <Text style={{ color: text, fontSize: 14, fontWeight: "900" }}>Student progress</Text>
-                      <Text style={{ color: muted, fontSize: 10, marginTop: 4 }}>Handicap and practice trend</Text>
+                      <Text style={{ color: muted, fontSize: 10, marginTop: 4 }}>Handicap trend from current roster</Text>
                     </View>
-                    <Text style={{ color: green, fontSize: 18, fontWeight: "900" }}>+18%</Text>
+                    <Text style={{ color: progressChange <= 0 ? green : orange, fontSize: 18, fontWeight: "900" }}>
+                      {progressChange > 0 ? "+" : ""}{progressChange}
+                    </Text>
                   </View>
-                  <Sparkline values={[12, 18, 16, 24, 28, 25, 34, 41, 48, 52]} color={green} width={columns ? 315 : 320} height={62} strokeWidth={2.4} />
+                  <Sparkline values={progressValues} color={green} width={columns ? 315 : 320} height={62} strokeWidth={2.4} />
                   <View style={{ marginTop: 9, flexDirection: "row", gap: 8 }}>
-                    {["Alex is ready for driver work", "Morgan putting improved"].map((item) => (
-                      <View key={item} style={{ flex: 1, borderRadius: 8, backgroundColor: "#0d1417", padding: 11, borderWidth: 1, borderColor: line }}>
-                        <Text numberOfLines={2} style={{ color: "#dce8e4", fontSize: 11, lineHeight: 15, fontWeight: "800" }}>{item}</Text>
-                      </View>
+                    {players.slice(0, 2).map((player) => (
+                      <Pressable key={player.id} onPress={() => navigation.getParent()?.navigate("PlayerProfile", { playerId: player.id })} style={{ flex: 1, borderRadius: 8, backgroundColor: "#0d1417", padding: 11, borderWidth: 1, borderColor: line }}>
+                        <Text numberOfLines={2} style={{ color: "#dce8e4", fontSize: 11, lineHeight: 15, fontWeight: "800" }}>{player.name}: {player.goals ?? "Set next goal"}</Text>
+                      </Pressable>
                     ))}
                   </View>
                 </View>
@@ -423,10 +585,10 @@ export default function CoachDashboardScreen() {
                   <View style={{ flex: 1, minHeight: 80, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
                     <Text style={{ color: text, fontSize: 13, fontWeight: "900" }}>Revenue trend</Text>
                     <Text style={{ color: green, fontSize: 20, fontWeight: "900", marginTop: 10 }}>{currency(facts.revenue)}</Text>
-                    <Text style={{ color: green, fontSize: 11, marginTop: 4, fontWeight: "800" }}>↑ 22% vs last month</Text>
+                    <Text style={{ color: green, fontSize: 11, marginTop: 4, fontWeight: "800" }}>{trend(facts.revenue, facts.previousMonthRevenue, "vs last month")}</Text>
                     <View style={{ marginTop: 7, flexDirection: "row", alignItems: "flex-end", gap: 6, height: 30 }}>
-                      {[22, 30, 26, 38, 34, 48, 57, 68].map((height, index) => (
-                        <View key={index} style={{ flex: 1, height, borderRadius: 3, backgroundColor: green, opacity: 0.55 + index * 0.05 }} />
+                      {facts.revenueBars.map((value, index) => (
+                        <View key={index} style={{ flex: 1, height: Math.max(5, value / maxRevenue * 68), borderRadius: 3, backgroundColor: green, opacity: 0.55 + index * 0.05 }} />
                       ))}
                     </View>
                   </View>
@@ -434,27 +596,23 @@ export default function CoachDashboardScreen() {
                   <View style={{ flex: 1, minHeight: 80, flexDirection: columns ? "row" : "column", gap: 12 }}>
                     <View style={{ flex: 1, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
                       <Text style={{ color: text, fontSize: 13, fontWeight: "900" }}>Upcoming availability</Text>
-                      <Text style={{ color: "#dce8e4", fontSize: 21, fontWeight: "900", marginTop: 10 }}>6 slots</Text>
-                      <Text style={{ color: muted, fontSize: 10, marginTop: 5 }}>Open before Friday</Text>
-                      <Pressable onPress={() => navigation.navigate("Schedule")} style={{ marginTop: 7, alignSelf: "flex-start", borderRadius: 7, backgroundColor: "#223039", paddingHorizontal: 10, paddingVertical: 6 }}>
-                        <Text style={{ color: text, fontSize: 10, fontWeight: "900" }}>View calendar</Text>
+                      <Text style={{ color: "#dce8e4", fontSize: 21, fontWeight: "900", marginTop: 10 }}>{facts.availabilityCount} slots</Text>
+                      <Text style={{ color: muted, fontSize: 10, marginTop: 5 }}>Configured booking windows</Text>
+                      <Pressable onPress={() => navigation.getParent()?.navigate("Availability")} style={{ marginTop: 7, alignSelf: "flex-start", borderRadius: 7, backgroundColor: "#223039", paddingHorizontal: 10, paddingVertical: 6 }}>
+                        <Text style={{ color: text, fontSize: 10, fontWeight: "900" }}>Edit availability</Text>
                       </Pressable>
                     </View>
 
                     <View style={{ flex: 1, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
                       <Text style={{ color: text, fontSize: 13, fontWeight: "900" }}>Lesson types</Text>
-                      {[
-                        ["Full Swing", "44%"],
-                        ["Short Game", "31%"],
-                        ["Video Review", "25%"],
-                      ].map(([label, value]) => (
+                      {(facts.lessonTypeBreakdown.length ? facts.lessonTypeBreakdown : [{ label: "No lessons yet", percent: 0 }]).map(({ label, percent }) => (
                         <View key={label} style={{ marginTop: 6 }}>
                           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                             <Text style={{ color: "#dce8e4", fontSize: 10, fontWeight: "800" }}>{label}</Text>
-                            <Text style={{ color: muted, fontSize: 10 }}>{value}</Text>
+                            <Text style={{ color: muted, fontSize: 10 }}>{percent}%</Text>
                           </View>
                           <View style={{ height: 5, borderRadius: 999, backgroundColor: "#0a1013", marginTop: 5, overflow: "hidden" }}>
-                            <View style={{ width: value as any, height: "100%", borderRadius: 999, backgroundColor: green }} />
+                            <View style={{ width: `${percent}%`, height: "100%", borderRadius: 999, backgroundColor: green }} />
                           </View>
                         </View>
                       ))}
