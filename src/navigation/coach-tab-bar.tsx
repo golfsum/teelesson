@@ -65,7 +65,7 @@ function DesktopTabBar({ state, navigation }: BottomTabBarProps) {
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 11,
-                backgroundColor: selected ? "#10b963" : pressed ? "#121d20" : "transparent",
+                backgroundColor: selected ? "#067a43" : pressed ? "#121d20" : "transparent",
               })}
             >
               <GolfLineIcon
@@ -123,18 +123,18 @@ function MobileItem({
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected }}
-      style={{ flex: 1, minHeight: 52, alignItems: "center", justifyContent: "center", gap: 2 }}
+      style={{ flex: 1, minHeight: 58, alignItems: "center", justifyContent: "center", gap: 3 }}
     >
       <GolfLineIcon
         name={icon}
-        size={21}
+        size={24}
         color={selected ? colors.white : "#d8e1de"}
-        accent={selected ? colors.fairway[300] : "#77dd45"}
-        muted="#687773"
-        strokeWidth={5.8}
+        accent={selected ? "#a5ff78" : "#8ced62"}
+        muted="#9aaba5"
+        strokeWidth={6.4}
         simple
       />
-      <Text style={{ color: selected ? colors.fairway[300] : colors.white, fontSize: 9.5, fontWeight: "600" }}>
+      <Text style={{ color: selected ? "#b7ff93" : "#f4f8f6", fontSize: 11, fontWeight: selected ? "800" : "700" }}>
         {label}
       </Text>
     </Pressable>
@@ -151,22 +151,22 @@ function MobileTabBar({ state, navigation }: BottomTabBarProps) {
   return (
     <View
       style={{
-        minHeight: 58 + insets.bottom,
-        paddingBottom: Math.max(insets.bottom, 5),
+        minHeight: 66 + insets.bottom,
+        paddingBottom: Math.max(insets.bottom, 7),
         paddingHorizontal: 4,
         flexDirection: "row",
         alignItems: "flex-start",
-        backgroundColor: colors.navy,
+        backgroundColor: "#020b08",
         borderTopWidth: 1,
-        borderTopColor: "rgba(92,227,159,0.18)",
+        borderTopColor: "rgba(140,237,98,0.52)",
       }}
     >
       {moreOpen ? (
-        <View style={{ position: "absolute", right: 8, bottom: 62 + insets.bottom, width: 270, borderRadius: 12, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.ink[200], padding: 10, flexDirection: "row", flexWrap: "wrap", gap: 6, boxShadow: "0 10px 30px rgba(0,0,0,0.22)" }}>
+        <View style={{ position: "absolute", right: 8, bottom: 70 + insets.bottom, width: 270, borderRadius: 12, backgroundColor: colors.white, borderWidth: 2, borderColor: colors.fairway[300], padding: 10, flexDirection: "row", flexWrap: "wrap", gap: 6, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
           {moreItems.map((item) => (
             <Pressable key={item.route} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => { setMoreOpen(false); navigation.navigate(item.route); }} style={{ width: "48%", minHeight: 42, borderRadius: 8, paddingHorizontal: 9, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: active === item.route ? colors.fairway[50] : colors.white }}>
               <GolfLineIcon name={item.icon} size={19} color={colors.ink[800]} accent={colors.fairway[600]} muted={colors.ink[400]} strokeWidth={6.6} simple />
-              <Text style={{ color: colors.ink[800], fontSize: 11, fontWeight: active === item.route ? "700" : "600" }}>{item.label}</Text>
+              <Text style={{ color: colors.ink[900], fontSize: 12, fontWeight: active === item.route ? "800" : "700" }}>{item.label}</Text>
             </Pressable>
           ))}
         </View>
@@ -194,7 +194,7 @@ function MobileTabBar({ state, navigation }: BottomTabBarProps) {
         >
           <Ionicons name="add" size={29} color={colors.navy} />
         </View>
-        <Text style={{ color: colors.white, fontSize: 9.5, fontWeight: "600", marginTop: 1 }}>New</Text>
+        <Text style={{ color: colors.white, fontSize: 11, fontWeight: "800", marginTop: 1 }}>New</Text>
       </Pressable>
       <MobileItem icon="messages" label="Messages" selected={active === "Messages"} onPress={() => navigation.navigate("Messages")} />
       <MobileItem icon="settings" label="More" selected={moreOpen || active === "Profile"} onPress={() => setMoreOpen((open) => !open)} />

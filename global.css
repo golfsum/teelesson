@@ -6,7 +6,7 @@
    concrete fallback so browser accessibility engines evaluate the same color. */
 input::placeholder,
 textarea::placeholder {
-  color: #5f716b !important;
+  color: var(--placeholderTextColor, #5f716b) !important;
   opacity: 1;
 }
 

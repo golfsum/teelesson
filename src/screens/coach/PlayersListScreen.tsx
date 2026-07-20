@@ -58,7 +58,7 @@ function TopSearch({
     <View style={{ height: 58, borderBottomWidth: 1, borderBottomColor: line, flexDirection: "row", alignItems: "center", paddingHorizontal: 22, gap: 16 }}>
       <View style={{ width: 330, height: 34, borderRadius: 7, borderWidth: 1, borderColor: "rgba(255,255,255,0.14)", backgroundColor: "#0b1114", flexDirection: "row", alignItems: "center", paddingHorizontal: 12, gap: 8 }}>
         <Ionicons name="search-outline" size={15} color={muted} />
-        <TextInput value={value} onChangeText={onChange} placeholder="Search students..." placeholderTextColor="#70807a" style={{ flex: 1, color: text, fontSize: 12, outlineStyle: "none" as any }} />
+        <TextInput value={value} onChangeText={onChange} placeholder="Search students..." placeholderTextColor="#b6c3bf" style={{ flex: 1, color: text, fontSize: 12, outlineStyle: "none" as any }} />
       </View>
       <View style={{ flex: 1 }} />
       <Ionicons name="notifications-outline" size={20} color="#e8f0ed" />
@@ -154,8 +154,8 @@ export default function PlayersListScreen() {
             </Text>
           </View>
           <Pressable onPress={() => navigation.navigate("InvitePlayer")} style={{ alignSelf: desktop ? "auto" : "flex-start", borderRadius: 8, backgroundColor: green, paddingHorizontal: 17, paddingVertical: 12, flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Ionicons name="add" size={16} color={text} />
-            <Text style={{ color: text, fontSize: 12, fontWeight: "900" }}>Add Student</Text>
+            <Ionicons name="add" size={16} color="#001d10" />
+            <Text style={{ color: "#001d10", fontSize: 12, fontWeight: "900" }}>Add Student</Text>
           </Pressable>
         </View>
 

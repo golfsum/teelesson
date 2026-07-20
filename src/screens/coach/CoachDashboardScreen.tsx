@@ -27,9 +27,9 @@ const bg = "#082417";
 const appBg = "#080d10";
 const panel = "#11181c";
 const panelSoft = "#151e23";
-const line = "rgba(255,255,255,0.08)";
+const line = "rgba(255,255,255,0.16)";
 const text = "#f6fbf8";
-const muted = "#95a5a0";
+const muted = "#b8c7c2";
 const green = "#12c86f";
 const orange = "#f6a12a";
 const red = "#ff4d57";
@@ -74,13 +74,15 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function DarkCard({ children, style }: { children: React.ReactNode; style?: any }) {
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   return (
     <View
       style={[
         {
-          backgroundColor: panel,
+          backgroundColor: phone ? "#121d21" : panel,
           borderWidth: 1,
-          borderColor: line,
+          borderColor: phone ? "rgba(255,255,255,0.24)" : line,
           borderRadius: 10,
           overflow: "hidden",
           boxShadow: "0 20px 48px rgba(0,0,0,0.28)",
@@ -107,27 +109,30 @@ function TopBar({
   onSearchSubmit: () => void;
 }) {
   const { user } = useAuth();
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   return (
     <View
       style={{
-        height: 58,
+        height: phone ? 64 : 58,
         borderBottomWidth: 1,
         borderBottomColor: line,
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 22,
-        gap: 18,
+        paddingHorizontal: phone ? 12 : 22,
+        gap: phone ? 10 : 18,
       }}
     >
       <View
         style={{
-          width: 330,
-          maxWidth: "48%",
-          height: 34,
+          width: phone ? undefined : 330,
+          flex: phone ? 1 : undefined,
+          maxWidth: phone ? undefined : "48%",
+          height: phone ? 42 : 34,
           borderRadius: 7,
           borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.14)",
-          backgroundColor: "#0b1114",
+          borderColor: phone ? "rgba(255,255,255,0.34)" : "rgba(255,255,255,0.14)",
+          backgroundColor: phone ? "#020608" : "#0b1114",
           flexDirection: "row",
           alignItems: "center",
           paddingHorizontal: 12,
@@ -139,9 +144,9 @@ function TopBar({
           value={search}
           onChangeText={setSearch}
           onSubmitEditing={onSearchSubmit}
-          placeholder="Search students, lessons or plans..."
-          placeholderTextColor="#70807a"
-          style={{ flex: 1, color: text, fontSize: 12, outlineStyle: "none" as any }}
+          placeholder={phone ? "Search students..." : "Search students, lessons or plans..."}
+          placeholderTextColor="#b6c3bf"
+          style={{ flex: 1, color: text, fontSize: phone ? 14 : 12, outlineStyle: "none" as any }}
         />
       </View>
       <View style={{ flex: 1 }} />
@@ -176,11 +181,13 @@ function TopBar({
           </View>
         ) : null}
       </Pressable>
-      <Avatar name={user?.name ?? "Coach"} uri={user?.photoURL} size={32} />
-      <Text numberOfLines={1} style={{ color: "#b8c6c1", fontSize: 12 }}>
-        {user?.name ?? "Coach"}
-      </Text>
-      <Ionicons name="chevron-down" size={14} color={muted} />
+      {!phone ? <Avatar name={user?.name ?? "Coach"} uri={user?.photoURL} size={32} /> : null}
+      {!phone ? (
+        <Text numberOfLines={1} style={{ color: "#d7e2de", fontSize: 12 }}>
+          {user?.name ?? "Coach"}
+        </Text>
+      ) : null}
+      {!phone ? <Ionicons name="chevron-down" size={14} color={muted} /> : null}
     </View>
   );
 }
@@ -200,38 +207,42 @@ function Metric({
   color?: string;
   style?: any;
 }) {
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   return (
-    <DarkCard style={[{ height: 124, paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }, style]}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
+    <DarkCard style={[{ height: phone ? 154 : 124, paddingHorizontal: phone ? 13 : 16, paddingTop: phone ? 14 : 16, paddingBottom: phone ? 16 : 14 }, style]}>
+      <View style={{ flexDirection: phone ? "column" : "row", alignItems: phone ? "flex-start" : "center", gap: phone ? 7 : 11 }}>
         <View
           style={{
-            width: 42,
-            height: 42,
+            width: phone ? 38 : 42,
+            height: phone ? 38 : 42,
             borderRadius: 11,
             backgroundColor: "rgba(18,200,111,0.13)",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <GolfLineIcon name={icon} size={32} color={text} accent={color} muted="#4e5b57" strokeWidth={4.5} />
+          <GolfLineIcon name={icon} size={phone ? 29 : 32} color={text} accent={color} muted="#8b9994" strokeWidth={5.2} />
         </View>
-        <Text style={{ color: "#dce8e4", fontSize: 12, fontWeight: "700" }}>{label}</Text>
+        <Text numberOfLines={2} style={{ color: "#f0f6f3", fontSize: phone ? 12.5 : 12, lineHeight: phone ? 15 : undefined, fontWeight: "800" }}>{label}</Text>
       </View>
-      <Text style={{ color: text, fontSize: 27, fontWeight: "900", marginTop: 7, letterSpacing: -0.5 }}>
+      <Text style={{ color: text, fontSize: phone ? 26 : 27, fontWeight: "900", marginTop: phone ? 5 : 7, letterSpacing: -0.5 }}>
         {value}
       </Text>
-      <Text style={{ color, fontSize: 11, marginTop: 2, fontWeight: "700" }}>{trend}</Text>
+      <Text numberOfLines={1} style={{ color, fontSize: phone ? 11.5 : 11, marginTop: 2, fontWeight: "800" }}>{trend}</Text>
     </DarkCard>
   );
 }
 
 function SectionHead({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   return (
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-      <Text style={{ color: text, fontSize: 14, fontWeight: "900" }}>{title}</Text>
+      <Text style={{ color: text, fontSize: phone ? 16 : 14, fontWeight: "900" }}>{title}</Text>
       {action ? (
         <Pressable onPress={onAction} disabled={!onAction}>
-          <Text style={{ color: "#d5e1dd", fontSize: 11 }}>{action}</Text>
+          <Text style={{ color: phone ? "#a5ff78" : "#d5e1dd", fontSize: phone ? 13 : 11, fontWeight: phone ? "800" : "500" }}>{action}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -261,9 +272,11 @@ function UpcomingLessons({
   onPrepare: (lesson: Lesson) => void;
   onViewAll: () => void;
 }) {
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   const rows = lessons.slice(0, 3);
   return (
-    <DarkCard style={{ flex: 1.2, padding: 16, minHeight: 234 }}>
+    <DarkCard style={{ flex: 1.2, padding: phone ? 14 : 16, minHeight: phone ? 282 : 234 }}>
       <SectionHead title="Upcoming Lessons" action="View All" onAction={onViewAll} />
       <View style={{ gap: 10 }}>
         {rows.length ? rows.map((lesson, index) => {
@@ -272,35 +285,35 @@ function UpcomingLessons({
             <View
               key={lesson.id}
               style={{
-                minHeight: 54,
+                minHeight: phone ? 72 : 54,
                 flexDirection: "row",
                 alignItems: "center",
-                gap: 12,
+                gap: phone ? 10 : 12,
                 borderTopWidth: index ? 1 : 0,
                 borderTopColor: line,
                 paddingTop: index ? 10 : 0,
               }}
             >
-              <Avatar name={name} size={36} />
+              <Avatar name={name} size={phone ? 40 : 36} />
               <View style={{ flex: 1, minWidth: 0 }}>
-                <Text numberOfLines={1} style={{ color: text, fontSize: 12, fontWeight: "800" }}>
+                <Text numberOfLines={1} style={{ color: text, fontSize: phone ? 14 : 12, fontWeight: "900" }}>
                   {name}
                 </Text>
-                <Text numberOfLines={1} style={{ color: muted, fontSize: 10, marginTop: 3 }}>
+                <Text numberOfLines={1} style={{ color: muted, fontSize: phone ? 12 : 10, marginTop: 3, fontWeight: phone ? "600" : "400" }}>
                   {formatDate(lesson.date)} • {formatTime(lesson.startTime)}
                 </Text>
               </View>
-              <View style={{ width: 100 }}>
+              {!phone ? <View style={{ width: 100 }}>
                 <Text numberOfLines={1} style={{ color: "#d9e4e0", fontSize: 10 }}>
                   {lesson.title ?? lessonTypeLabel(lesson.type)}
                 </Text>
                 <Text style={{ color: muted, fontSize: 10, marginTop: 2 }}>{lesson.duration} min • {lesson.status}</Text>
-              </View>
+              </View> : null}
               <Pressable
                 onPress={() => onPrepare(lesson)}
-                style={{ borderRadius: 7, backgroundColor: green, paddingHorizontal: 14, paddingVertical: 9 }}
+                style={{ borderRadius: 8, backgroundColor: green, minHeight: phone ? 42 : undefined, justifyContent: "center", paddingHorizontal: phone ? 12 : 14, paddingVertical: 9 }}
               >
-                <Text style={{ color: text, fontSize: 11, fontWeight: "900" }}>Prepare</Text>
+                <Text style={{ color: "#001d10", fontSize: phone ? 12 : 11, fontWeight: "900" }}>Prepare</Text>
               </Pressable>
             </View>
           );
@@ -313,6 +326,8 @@ function UpcomingLessons({
 }
 
 function NeedsAttention({ facts, onNavigate }: { facts: Facts; onNavigate: (route: string) => void }) {
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   const rows = [
     facts.videoReviewCount > 0 ? { icon: "video-review" as const, color: red, label: `${facts.videoReviewCount} video ${facts.videoReviewCount === 1 ? "review" : "reviews"} awaiting review`, route: "Videos" } : null,
     facts.bookingRequests > 0 ? { icon: "booking" as const, color: orange, label: `${facts.bookingRequests} booking ${facts.bookingRequests === 1 ? "request" : "requests"} awaiting approval`, route: "Schedule" } : null,
@@ -321,14 +336,14 @@ function NeedsAttention({ facts, onNavigate }: { facts: Facts; onNavigate: (rout
   ].filter(Boolean) as Array<{ icon: GolfIconName; color: string; label: string; route: string }>;
 
   return (
-    <DarkCard style={{ padding: 16, minHeight: 128 }}>
+    <DarkCard style={{ padding: phone ? 14 : 16, minHeight: 128 }}>
       <SectionHead title="Needs Your Attention" action={String(rows.length)} />
       {rows.length ? rows.map((row, index) => (
         <Pressable
           key={row.label}
           onPress={() => onNavigate(row.route)}
           style={{
-            minHeight: 36,
+            minHeight: phone ? 50 : 36,
             flexDirection: "row",
             alignItems: "center",
             gap: 11,
@@ -336,11 +351,11 @@ function NeedsAttention({ facts, onNavigate }: { facts: Facts; onNavigate: (rout
             borderTopColor: line,
           }}
         >
-          <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: `${row.color}40`, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: `${row.color}66` }}>
-            <GolfLineIcon name={row.icon} size={21} color={text} accent={row.color} muted="#a4b0ab" strokeWidth={6.3} simple />
+          <View style={{ width: phone ? 36 : 30, height: phone ? 36 : 30, borderRadius: phone ? 18 : 15, backgroundColor: `${row.color}55`, alignItems: "center", justifyContent: "center", borderWidth: phone ? 2 : 1, borderColor: `${row.color}aa` }}>
+            <GolfLineIcon name={row.icon} size={phone ? 24 : 21} color={text} accent={row.color} muted="#c2cec9" strokeWidth={6.8} simple />
           </View>
-          <Text style={{ flex: 1, color: "#d8e3df", fontSize: 12 }}>{row.label}</Text>
-          <Ionicons name="chevron-forward" size={14} color={muted} />
+          <Text style={{ flex: 1, color: "#f0f6f3", fontSize: phone ? 13.5 : 12, lineHeight: phone ? 18 : undefined, fontWeight: phone ? "700" : "400" }}>{row.label}</Text>
+          <Ionicons name="chevron-forward" size={phone ? 19 : 14} color={phone ? "#d5e1dd" : muted} />
         </Pressable>
       )) : (
         <Text style={{ color: muted, fontSize: 12 }}>No urgent actions right now.</Text>
@@ -350,20 +365,22 @@ function NeedsAttention({ facts, onNavigate }: { facts: Facts; onNavigate: (rout
 }
 
 function RecentActivity({ items }: { items: Array<{ id: string; label: string; detail: string; time: string }> }) {
+  const { width } = useWindowDimensions();
+  const phone = width < 700;
   return (
-    <DarkCard style={{ padding: 16, minHeight: 92 }}>
+    <DarkCard style={{ padding: phone ? 14 : 16, minHeight: 92 }}>
       <SectionHead title="Recent Activity" />
       <View style={{ gap: 10 }}>
         {items.length ? items.map((item) => (
-          <View key={item.id} style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
-            <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: green, alignItems: "center", justifyContent: "center" }}>
-              <Ionicons name="checkmark" size={15} color={text} />
+          <View key={item.id} style={{ minHeight: phone ? 52 : undefined, flexDirection: "row", alignItems: "center", gap: 11 }}>
+            <View style={{ width: phone ? 30 : 24, height: phone ? 30 : 24, borderRadius: phone ? 15 : 12, backgroundColor: green, alignItems: "center", justifyContent: "center" }}>
+              <Ionicons name="checkmark" size={phone ? 18 : 15} color="#001d10" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: "#d8e3df", fontSize: 12 }}>{item.label}</Text>
-              <Text style={{ color: muted, fontSize: 10, marginTop: 2 }}>{item.detail}</Text>
+              <Text style={{ color: "#f0f6f3", fontSize: phone ? 13.5 : 12, fontWeight: phone ? "700" : "400" }}>{item.label}</Text>
+              <Text style={{ color: muted, fontSize: phone ? 12 : 10, lineHeight: phone ? 16 : undefined, marginTop: 3 }}>{item.detail}</Text>
             </View>
-            <Text style={{ color: muted, fontSize: 10 }}>{item.time}</Text>
+            {!phone ? <Text style={{ color: muted, fontSize: 10 }}>{item.time}</Text> : null}
           </View>
         )) : (
           <Text style={{ color: muted, fontSize: 12 }}>Activity will appear as lessons and bookings change.</Text>
@@ -501,6 +518,7 @@ export default function CoachDashboardScreen() {
   const playerMap = useMemo(() => Object.fromEntries(players.map((player) => [player.id, player.name])), [players]);
   const recentActivity = useMemo(() => buildRecentActivity(lessons, playerMap), [lessons, playerMap]);
   const columns = width >= 1120;
+  const phone = width < 700;
   const maxRevenue = Math.max(...facts.revenueBars, 1);
   const progressValues = facts.studentProgress.length ? facts.studentProgress : [0, 0, 0, 0];
   const progressChange = progressValues.length > 1 ? Math.round((progressValues[progressValues.length - 1] - progressValues[0]) * 10) / 10 : 0;
@@ -524,30 +542,30 @@ export default function CoachDashboardScreen() {
       />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ padding: width >= 1024 ? 22 : 16, paddingBottom: 34 }}
+        contentContainerStyle={{ padding: width >= 1024 ? 22 : phone ? 12 : 16, paddingBottom: phone ? 48 : 34 }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 22 }}>
+        <View style={{ flexDirection: phone ? "column" : "row", alignItems: "flex-start", justifyContent: "space-between", gap: phone ? 8 : 12, marginBottom: phone ? 18 : 22 }}>
           <View>
-            <Text style={{ color: text, fontSize: width >= 900 ? 27 : 23, fontWeight: "900", letterSpacing: -0.6 }}>
+            <Text style={{ color: text, fontSize: width >= 900 ? 27 : phone ? 26 : 23, lineHeight: phone ? 31 : undefined, fontWeight: "900", letterSpacing: -0.6 }}>
               Good morning, {user?.name?.split(" ")[0] ?? "Coach"}!
             </Text>
-            <Text style={{ color: "#bcc9c4", fontSize: 14, marginTop: 7 }}>
+            <Text style={{ color: phone ? "#e0e9e5" : "#bcc9c4", fontSize: phone ? 15 : 14, lineHeight: phone ? 21 : undefined, marginTop: 7 }}>
               Focus on coaching. We'll make the rest easier.
             </Text>
           </View>
-          <Text style={{ color: "#b9c6c1", fontSize: 12, marginTop: 4 }}>{currentDateLabel()}</Text>
+          <Text style={{ color: phone ? "#cbd8d3" : "#b9c6c1", fontSize: phone ? 13 : 12, fontWeight: phone ? "700" : "400", marginTop: phone ? 0 : 4 }}>{currentDateLabel()}</Text>
         </View>
 
         {loading ? (
           <ActivityIndicator color={green} size="large" style={{ marginTop: 120 }} />
         ) : (
           <View style={{ gap: 16 }}>
-            <View style={{ flexDirection: columns ? "row" : "column", gap: 14 }}>
-              <Metric icon="students" label="Active Students" value={String(facts.activeStudents)} trend={`↑ ${facts.newStudentsThisMonth} new this month`} style={{ flex: 1 }} />
-              <Metric icon="calendar-club" label="Lessons This Week" value={String(facts.lessonsThisWeek)} trend={trend(facts.lessonsThisWeek, facts.previousWeekLessons, "vs last week")} style={{ flex: 1 }} />
-              <Metric icon="booking" label="Booking Requests" value={String(facts.bookingRequests)} trend={`↑ ${facts.newBookingRequestsToday} new today`} style={{ flex: 1 }} />
-              <Metric icon="revenue" label="Revenue This Month" value={currency(facts.revenue)} trend={trend(facts.revenue, facts.previousMonthRevenue, "vs last month")} style={{ flex: 1 }} />
+            <View style={{ flexDirection: columns || phone ? "row" : "column", flexWrap: phone ? "wrap" : "nowrap", gap: phone ? 10 : 14 }}>
+              <Metric icon="students" label="Active Students" value={String(facts.activeStudents)} trend={`↑ ${facts.newStudentsThisMonth} new this month`} style={phone ? { width: "48.5%" } : { flex: 1 }} />
+              <Metric icon="calendar-club" label="Lessons This Week" value={String(facts.lessonsThisWeek)} trend={trend(facts.lessonsThisWeek, facts.previousWeekLessons, "vs last week")} style={phone ? { width: "48.5%" } : { flex: 1 }} />
+              <Metric icon="booking" label="Booking Requests" value={String(facts.bookingRequests)} trend={`↑ ${facts.newBookingRequestsToday} new today`} style={phone ? { width: "48.5%" } : { flex: 1 }} />
+              <Metric icon="revenue" label="Revenue This Month" value={currency(facts.revenue)} trend={trend(facts.revenue, facts.previousMonthRevenue, "vs last month")} style={phone ? { width: "48.5%" } : { flex: 1 }} />
             </View>
 
             <View style={{ flexDirection: columns ? "row" : "column", gap: 16 }}>
@@ -558,14 +576,14 @@ export default function CoachDashboardScreen() {
               </View>
             </View>
 
-            <DarkCard style={{ padding: 16, minHeight: columns ? 224 : 392 }}>
+            <DarkCard style={{ padding: phone ? 14 : 16, minHeight: columns ? 224 : 392 }}>
               <SectionHead title="Coaching Snapshot" />
               <View style={{ flexDirection: columns ? "row" : "column", gap: 14, alignItems: "stretch" }}>
-                <View style={{ flex: 1.25, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 13, minHeight: 160 }}>
+                <View style={{ flex: phone ? undefined : 1.25, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 13, minHeight: phone ? 230 : 160 }}>
                   <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                     <View>
-                      <Text style={{ color: text, fontSize: 14, fontWeight: "900" }}>Student progress</Text>
-                      <Text style={{ color: muted, fontSize: 10, marginTop: 4 }}>Handicap trend from current roster</Text>
+                      <Text style={{ color: text, fontSize: phone ? 16 : 14, fontWeight: "900" }}>Student progress</Text>
+                      <Text style={{ color: muted, fontSize: phone ? 12 : 10, lineHeight: phone ? 16 : undefined, marginTop: 4 }}>Handicap trend from current roster</Text>
                     </View>
                     <Text style={{ color: progressChange <= 0 ? green : orange, fontSize: 18, fontWeight: "900" }}>
                       {progressChange > 0 ? "+" : ""}{progressChange}
@@ -575,41 +593,41 @@ export default function CoachDashboardScreen() {
                   <View style={{ marginTop: 9, flexDirection: "row", gap: 8 }}>
                     {players.slice(0, 2).map((player) => (
                       <Pressable key={player.id} onPress={() => navigation.getParent()?.navigate("PlayerProfile", { playerId: player.id })} style={{ flex: 1, borderRadius: 8, backgroundColor: "#0d1417", padding: 11, borderWidth: 1, borderColor: line }}>
-                        <Text numberOfLines={2} style={{ color: "#dce8e4", fontSize: 11, lineHeight: 15, fontWeight: "800" }}>{player.name}: {player.goals ?? "Set next goal"}</Text>
+                        <Text numberOfLines={2} style={{ color: "#f0f6f3", fontSize: phone ? 12.5 : 11, lineHeight: phone ? 17 : 15, fontWeight: "800" }}>{player.name}: {player.goals ?? "Set next goal"}</Text>
                       </Pressable>
                     ))}
                   </View>
                 </View>
 
-                <View style={{ flex: 1, gap: 12 }}>
-                  <View style={{ flex: 1, minHeight: 80, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
-                    <Text style={{ color: text, fontSize: 13, fontWeight: "900" }}>Revenue trend</Text>
+                <View style={{ flex: phone ? undefined : 1, gap: 12 }}>
+                  <View style={{ flex: phone ? undefined : 1, minHeight: phone ? 150 : 80, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
+                    <Text style={{ color: text, fontSize: phone ? 15 : 13, fontWeight: "900" }}>Revenue trend</Text>
                     <Text style={{ color: green, fontSize: 20, fontWeight: "900", marginTop: 10 }}>{currency(facts.revenue)}</Text>
-                    <Text style={{ color: green, fontSize: 11, marginTop: 4, fontWeight: "800" }}>{trend(facts.revenue, facts.previousMonthRevenue, "vs last month")}</Text>
-                    <View style={{ marginTop: 7, flexDirection: "row", alignItems: "flex-end", gap: 6, height: 30 }}>
+                    <Text style={{ color: green, fontSize: phone ? 12 : 11, marginTop: 4, fontWeight: "800" }}>{trend(facts.revenue, facts.previousMonthRevenue, "vs last month")}</Text>
+                    <View style={{ marginTop: 7, flexDirection: "row", alignItems: "flex-end", gap: 6, height: phone ? 52 : 30 }}>
                       {facts.revenueBars.map((value, index) => (
-                        <View key={index} style={{ flex: 1, height: Math.max(5, value / maxRevenue * 68), borderRadius: 3, backgroundColor: green, opacity: 0.55 + index * 0.05 }} />
+                        <View key={index} style={{ flex: 1, height: Math.max(5, value / maxRevenue * (phone ? 52 : 30)), borderRadius: 3, backgroundColor: green, opacity: 0.55 + index * 0.05 }} />
                       ))}
                     </View>
                   </View>
 
-                  <View style={{ flex: 1, minHeight: 80, flexDirection: columns ? "row" : "column", gap: 12 }}>
-                    <View style={{ flex: 1, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
-                      <Text style={{ color: text, fontSize: 13, fontWeight: "900" }}>Upcoming availability</Text>
+                  <View style={{ flex: phone ? undefined : 1, minHeight: 80, flexDirection: columns ? "row" : "column", gap: 12 }}>
+                    <View style={{ flex: phone ? undefined : 1, minHeight: phone ? 126 : undefined, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
+                      <Text style={{ color: text, fontSize: phone ? 15 : 13, fontWeight: "900" }}>Upcoming availability</Text>
                       <Text style={{ color: "#dce8e4", fontSize: 21, fontWeight: "900", marginTop: 10 }}>{facts.availabilityCount} slots</Text>
-                      <Text style={{ color: muted, fontSize: 10, marginTop: 5 }}>Configured booking windows</Text>
+                      <Text style={{ color: muted, fontSize: phone ? 12 : 10, marginTop: 5 }}>Configured booking windows</Text>
                       <Pressable onPress={() => navigation.getParent()?.navigate("Availability")} style={{ marginTop: 7, alignSelf: "flex-start", borderRadius: 7, backgroundColor: "#223039", paddingHorizontal: 10, paddingVertical: 6 }}>
-                        <Text style={{ color: text, fontSize: 10, fontWeight: "900" }}>Edit availability</Text>
+                        <Text style={{ color: text, fontSize: phone ? 12 : 10, fontWeight: "900" }}>Edit availability</Text>
                       </Pressable>
                     </View>
 
-                    <View style={{ flex: 1, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
-                      <Text style={{ color: text, fontSize: 13, fontWeight: "900" }}>Lesson types</Text>
+                    <View style={{ flex: phone ? undefined : 1, minHeight: phone ? 132 : undefined, borderRadius: 9, backgroundColor: panelSoft, borderWidth: 1, borderColor: line, padding: 12 }}>
+                      <Text style={{ color: text, fontSize: phone ? 15 : 13, fontWeight: "900" }}>Lesson types</Text>
                       {(facts.lessonTypeBreakdown.length ? facts.lessonTypeBreakdown : [{ label: "No lessons yet", percent: 0 }]).map(({ label, percent }) => (
                         <View key={label} style={{ marginTop: 6 }}>
                           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text style={{ color: "#dce8e4", fontSize: 10, fontWeight: "800" }}>{label}</Text>
-                            <Text style={{ color: muted, fontSize: 10 }}>{percent}%</Text>
+                            <Text style={{ color: "#f0f6f3", fontSize: phone ? 12 : 10, fontWeight: "800" }}>{label}</Text>
+                            <Text style={{ color: muted, fontSize: phone ? 12 : 10, fontWeight: phone ? "700" : "400" }}>{percent}%</Text>
                           </View>
                           <View style={{ height: 5, borderRadius: 999, backgroundColor: "#0a1013", marginTop: 5, overflow: "hidden" }}>
                             <View style={{ width: `${percent}%`, height: "100%", borderRadius: 999, backgroundColor: green }} />

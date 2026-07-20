@@ -51,7 +51,7 @@ function Header({ title, actionLabel, onAction }: { title: string; actionLabel?:
       <View style={{ flex: 1 }} />
       {actionLabel ? (
         <Pressable onPress={onAction} style={{ borderRadius: 8, backgroundColor: green, paddingHorizontal: 16, paddingVertical: 10 }}>
-          <Text style={{ color: text, fontSize: 12, fontWeight: "900" }}>{actionLabel}</Text>
+          <Text style={{ color: "#001d10", fontSize: 12, fontWeight: "900" }}>{actionLabel}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -165,7 +165,7 @@ function VideoReviews({ coachId }: { coachId: string }) {
                   </View>
                   {lesson.status !== "completed" ? (
                     <View style={{ borderRadius: 6, backgroundColor: red, paddingHorizontal: 8, paddingVertical: 5 }}>
-                      <Text style={{ color: text, fontSize: 10, fontWeight: "900" }}>Pending</Text>
+                      <Text style={{ color: "#210205", fontSize: 10, fontWeight: "900" }}>Pending</Text>
                     </View>
                   ) : null}
                   <Pressable onPress={() => lesson.playerId ? navigation.getParent()?.navigate("PlayerProfile", { playerId: lesson.playerId }) : navigation.getParent()?.navigate("AddLesson", { replaceId: lesson.id })} style={{ borderRadius: 7, backgroundColor: "#2a343a", paddingHorizontal: 12, paddingVertical: 9 }}>

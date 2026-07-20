@@ -52,7 +52,7 @@ function Toggle({ label, active, onPress }: { label: string; active: boolean; on
 }
 
 function lessonColor(index: number) {
-  return ["#2089e6", "#15b86d", "#17b978", "#8058df", "#f29a25"][index % 5];
+  return ["#5bb5ff", "#38d88a", "#3bd6a0", "#ae8cff", "#f6b64c"][index % 5];
 }
 
 function CalendarBlock({
@@ -81,8 +81,8 @@ function CalendarBlock({
         justifyContent: "space-between",
       }}
     >
-      <Text numberOfLines={1} style={{ color: text, fontSize: 11, fontWeight: "900" }}>{name.split(" ")[0]}</Text>
-      <Text numberOfLines={1} style={{ color: "rgba(255,255,255,0.85)", fontSize: 10 }}>{lesson.title ?? lesson.type}</Text>
+      <Text numberOfLines={1} style={{ color: "#06130e", fontSize: 11, fontWeight: "900" }}>{name.split(" ")[0]}</Text>
+      <Text numberOfLines={1} style={{ color: "#14231d", fontSize: 10, fontWeight: "700" }}>{lesson.title ?? lesson.type}</Text>
     </Pressable>
   );
 }
@@ -129,8 +129,8 @@ export default function ScheduleScreen() {
         <View style={{ flexDirection: desktop ? "row" : "column", alignItems: desktop ? "center" : "stretch", justifyContent: "space-between", gap: 14, marginBottom: 18 }}>
           <Text style={{ color: text, fontSize: 27, fontWeight: "900", letterSpacing: -0.5 }}>Schedule</Text>
           <Pressable onPress={() => navigation.navigate("AddLesson", { date: today })} style={{ alignSelf: desktop ? "auto" : "flex-start", borderRadius: 8, backgroundColor: green, paddingHorizontal: 17, paddingVertical: 12, flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Ionicons name="add" size={16} color={text} />
-            <Text style={{ color: text, fontSize: 12, fontWeight: "900" }}>New Lesson</Text>
+            <Ionicons name="add" size={16} color="#001d10" />
+            <Text style={{ color: "#001d10", fontSize: 12, fontWeight: "900" }}>New Lesson</Text>
           </Pressable>
         </View>
 
